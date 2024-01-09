@@ -2,7 +2,7 @@
 
 <template>
     <div class="container mx-auto mt-60 max-w-md">
-        <h1>Hello, World!</h1>
+        <h1>{{ $t("helloWorld") }}</h1>
     </div>
 </template>
 
