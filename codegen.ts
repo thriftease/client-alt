@@ -6,7 +6,7 @@ dotenv.config();
 const config: CodegenConfig = {
     schema: process.env.API_URL,
     generates: {
-        "./src/gql/types.d.ts": {
+        "./src/gql/types.ts": {
             plugins: [
                 "typescript",
                 "typescript-operations",
