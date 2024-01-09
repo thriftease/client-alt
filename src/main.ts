@@ -1,14 +1,21 @@
 import "./assets/main.css";
 
 import { createPinia } from "pinia";
-import { createApp } from "vue";
+import { createApp, h, provide } from "vue";
 
 import App from "./App.vue";
 import router from "./router";
 
-import { i18nClient } from "@/utils";
+import { apolloClient, i18nClient } from "@/utils";
+import { DefaultApolloClient } from "@vue/apollo-composable";
 
-const app = createApp(App);
+const app = createApp({
+    setup() {
+        provide(DefaultApolloClient, apolloClient);
+    },
+
+    render: () => h(App)
+});
 
 app.use(i18nClient);
 app.use(createPinia());
