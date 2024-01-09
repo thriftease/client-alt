@@ -4,6 +4,7 @@
     "Vue.vscode-typescript-vue-plugin",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "apollographql.vscode-apollo"
+    "apollographql.vscode-apollo",
+    "bradlc.vscode-tailwindcss"
   ]
 }
