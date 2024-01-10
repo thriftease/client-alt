@@ -3,7 +3,7 @@ import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 let skipAuthCheck = false;
 const authedRedirection = undefined;
-const notAuthedRedirection = undefined;
+const notAuthedRedirection = { name: "auth-sign-in" };
 
 async function authGuard(
     to: RouteLocationNormalized,

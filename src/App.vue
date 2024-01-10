@@ -2,7 +2,7 @@
 
 <template>
     <div class="container mx-auto mt-60 max-w-md">
-        <h1>{{ $t("helloWorld") }}</h1>
+        <router-view></router-view>
     </div>
 </template>
 
