@@ -1,13 +1,19 @@
 <script setup lang="ts">
+import { type ErrorObject } from "@vuelidate/core";
 import FieldErrorPart from "./FieldErrorPart.vue";
 
 defineProps({
     errors: {
-        type: [Array<string>, String],
+        type: [
+            Array<ErrorObject | string>,
+            Object as () => ErrorObject,
+            String
+        ],
         required: false
     },
-    hide: {
+    hidden: {
         type: Boolean,
+        default: true,
         required: false
     }
 });
@@ -15,17 +21,21 @@ defineProps({
 
 <template>
     <ul
-        v-if="errors instanceof Array && ((!hide && errors.length) || true)"
+        v-if="errors instanceof Array && (hidden ? errors.length > 1 : true)"
         v-bind="$attrs"
     >
-        <li v-for="(error, i) in errors" :key="i">
-            <FieldErrorPart>{{ error }}</FieldErrorPart>
+        <li
+            v-for="(error, i) in errors"
+            :key="typeof error === 'string' ? i : error.$uid"
+        >
+            <FieldErrorPart :error="error"></FieldErrorPart>
         </li>
     </ul>
     <FieldErrorPart
-        v-else-if="typeof errors === 'string' && ((!hide && errors) || true)"
+        v-else
+        :error="errors instanceof Array ? errors[0] : errors"
+        :hidden="hidden"
         v-bind="$attrs"
     >
-        {{ errors }}
     </FieldErrorPart>
 </template>

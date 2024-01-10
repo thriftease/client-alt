@@ -1,7 +1,20 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { type ErrorObject } from "@vuelidate/core";
+defineProps({
+    error: {
+        type: [Object as () => ErrorObject, String],
+        required: false
+    },
+    hidden: {
+        type: Boolean,
+        default: true,
+        required: false
+    }
+});
+</script>
 
 <template>
-    <div v-bind="$attrs">
-        <slot></slot>
+    <div v-if="hidden ? error : true" v-bind="$attrs">
+        {{ typeof error === "string" ? error : error?.$message }}
     </div>
 </template>

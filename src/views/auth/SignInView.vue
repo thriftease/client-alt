@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
 import { useAuthStore } from "@/stores";
-import { flattenErrors, validators } from "@/utils";
+import { validators } from "@/utils";
 import { ApolloError } from "@apollo/client/core";
 import useVuelidate from "@vuelidate/core";
 import { ref } from "vue";
@@ -15,9 +15,13 @@ const data = ref({
 });
 
 const rules = {
-    email: { required: validators.required, email: validators.email },
-    password: { required: validators.required },
-    rememberMe: {}
+    email: [
+        validators.required,
+        validators.email,
+        validators.emailNotExisting
+    ],
+    password: [validators.required],
+    rememberMe: []
 };
 
 const $v = useVuelidate(rules, data);
@@ -52,7 +56,8 @@ async function submit() {
             />
             <FieldErrorsPart
                 class="min-h-6"
-                :errors="flattenErrors($v.email.$errors)"
+                :errors="$v.email.$errors[0]"
+                :hidden="false"
             ></FieldErrorsPart>
         </div>
         <div>
@@ -66,7 +71,8 @@ async function submit() {
             />
             <FieldErrorsPart
                 class="min-h-6"
-                :errors="flattenErrors($v.password.$errors)"
+                :errors="$v.password.$errors[0]"
+                :hidden="false"
             ></FieldErrorsPart>
         </div>
         <div>

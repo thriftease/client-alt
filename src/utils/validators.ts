@@ -1,13 +1,15 @@
-import { i18nClient } from "@/utils";
+import apolloClient from "@/utils/apolloClient";
+import i18nClient from "@/utils/i18nClient";
 import {
     email,
     helpers,
     required,
     type MessageProps
 } from "@vuelidate/validators";
+import gql from "graphql-tag";
 
 const $t = i18nClient.global.t;
-const { withMessage } = helpers;
+const { withMessage, withAsync } = helpers;
 
 const keys = [
     "$invalid",
@@ -38,8 +40,40 @@ function getMessage(str: string, include?: string[]) {
     return (p: MessageProps) => treplace(str, p, include);
 }
 
+async function isEmailExisting(email: string) {
+    try {
+        const res = await apolloClient.query<{
+            authExisting: boolean;
+        }>({
+            query: gql`
+                query AuthExisting($email: String!) {
+                    authExisting(email: $email)
+                }
+            `,
+            variables: { email }
+        });
+        return res.data.authExisting;
+    } catch (err: any) {
+        /* empty */
+    }
+    return false;
+}
+
+const emailNotExisting = withAsync(isEmailExisting);
+const emailExisting = withAsync(
+    async (v: string) => !(await isEmailExisting(v))
+);
+
 export default {
     utils: { replace, treplace, getMessage },
     required: withMessage(getMessage("validations.required"), required),
-    email: withMessage(getMessage("validations.email"), email)
+    email: withMessage(getMessage("validations.email"), email),
+    emailExisting: withMessage(
+        getMessage("validations.emailExisting"),
+        emailExisting
+    ),
+    emailNotExisting: withMessage(
+        getMessage("validations.emailNotExisting"),
+        emailNotExisting
+    )
 };

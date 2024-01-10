@@ -1,7 +1,9 @@
 {
     "validations": {
         "required": "Value is required",
-        "email": "Value is not a valid email address"
+        "email": "Value is not a valid email address",
+        "emailExisting": "Email is already existing",
+        "emailNotExisting": "Email does not exist"
     },
     "signIn": "Sign in",
     "email": "Email",
