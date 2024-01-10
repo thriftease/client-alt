@@ -1,5 +1,14 @@
 import authGuard from "@/router/authGuard";
+import titleGuard, { defaultTitle } from "@/router/titleGuard";
+import { i18nClient } from "@/utils";
 import { createRouter, createWebHistory } from "vue-router";
+
+function getTitle(title?: string) {
+    if (!title) return defaultTitle;
+    return `${defaultTitle} - ${title}`;
+}
+
+const $t = i18nClient.global.t;
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +27,7 @@ const router = createRouter({
                 {
                     path: "/sign-in",
                     name: "auth-sign-in",
+                    meta: { title: getTitle($t("signIn")) },
                     component: () => import("@/views/auth/SignInView.vue")
                 }
             ]
@@ -26,5 +36,6 @@ const router = createRouter({
 });
 
 router.beforeEach(authGuard);
+router.beforeEach(titleGuard);
 
 export default router;

@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
-    <h1>Sign in</h1>
+    <h1>{{ $t("signIn") }}</h1>
 </template>
