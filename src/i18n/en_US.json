@@ -1,3 +1,7 @@
 {
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me?",
+    "submit": "Submit"
 }
