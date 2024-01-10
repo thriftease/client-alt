@@ -1,4 +1,9 @@
 import apolloClient from "@/utils/apolloClient";
 import i18nClient from "@/utils/i18nClient";
+import type { ErrorObject } from "@vuelidate/core";
 
-export { apolloClient, i18nClient };
+function flattenErrors(errors: ErrorObject[]) {
+    return errors.map((e) => e.$message as string);
+}
+
+export { apolloClient, flattenErrors, i18nClient };
