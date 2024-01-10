@@ -1,4 +1,8 @@
 {
+    "validations": {
+        "required": "Value is required",
+        "email": "Value is not a valid email address"
+    },
     "signIn": "Sign in",
     "email": "Email",
     "password": "Password",

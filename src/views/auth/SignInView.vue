@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
 import { useAuthStore } from "@/stores";
-import { flattenErrors } from "@/utils";
+import { flattenErrors, validators } from "@/utils";
 import { ApolloError } from "@apollo/client/core";
 import useVuelidate from "@vuelidate/core";
-import { email, required } from "@vuelidate/validators";
 import { ref } from "vue";
 
 const authStore = useAuthStore();
@@ -16,8 +15,8 @@ const data = ref({
 });
 
 const rules = {
-    email: { required, email },
-    password: { required },
+    email: { required: validators.required, email: validators.email },
+    password: { required: validators.required },
     rememberMe: {}
 };
 
