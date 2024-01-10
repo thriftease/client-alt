@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores";
+import authGuard from "@/router/authGuard";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -6,35 +6,6 @@ const router = createRouter({
     routes: []
 });
 
-let skipAuthCheck = false;
-const authedRedirection = undefined;
-const notAuthedRedirection = undefined;
-
-router.beforeEach(async (to, from, next) => {
-    const authStore = useAuthStore();
-    if (!authedRedirection && !notAuthedRedirection) return next();
-
-    if (skipAuthCheck) {
-        skipAuthCheck = false;
-        return next();
-    }
-
-    await authStore.verify();
-
-    // skipAuthCheck if matches and just proceed with the route
-    // since we don't want to re-run this route guard again
-    if (to.matched.some((record) => record.meta.authed === true)) {
-        if (!authStore.signedIn) {
-            skipAuthCheck = true;
-            return next(notAuthedRedirection);
-        }
-    } else if (to.matched.some((record) => record.meta.authed === false)) {
-        if (authStore.signedIn) {
-            skipAuthCheck = true;
-            return next(authedRedirection);
-        }
-    }
-    next();
-});
+router.beforeEach(authGuard);
 
 export default router;
