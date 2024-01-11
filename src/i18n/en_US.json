@@ -2,12 +2,13 @@
     "validations": {
         "required": "Value is required",
         "email": "Value is not a valid email address",
-        "emailExisting": "Email is already existing",
-        "emailNotExisting": "Email does not exist"
+        "emailExisting": "Email does not exist",
+        "emailNotExisting": "Email is already existing"
     },
     "signIn": "Sign in",
     "email": "Email",
     "password": "Password",
     "rememberMe": "Remember me?",
-    "submit": "Submit"
+    "submit": "Submit",
+    "signUp": "Sign up"
 }

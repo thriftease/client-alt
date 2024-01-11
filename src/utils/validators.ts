@@ -59,8 +59,8 @@ async function isEmailExisting(email: string) {
     return false;
 }
 
-const emailNotExisting = withAsync(isEmailExisting);
-const emailExisting = withAsync(
+const emailExisting = withAsync(isEmailExisting);
+const emailNotExisting = withAsync(
     async (v: string) => !(await isEmailExisting(v))
 );
 
