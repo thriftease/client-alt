@@ -4,6 +4,7 @@ import {
     type AuthSignInMutationPayload,
     type AuthVerifyMutationPayload,
     type CreateUserMutationInput,
+    type CreateUserMutationPayload,
     type UserType
 } from "@/gql";
 import { apolloClient } from "@/utils";
@@ -102,7 +103,7 @@ const useAuthStore = defineStore("authStore", () => {
     async function signUp(user: CreateUserMutationInput) {
         try {
             const result = await client.mutate<{
-                authSignUp: AuthSignInMutationPayload;
+                authSignUp: CreateUserMutationPayload;
             }>({
                 mutation: gql`
                     ${errorFragment}
