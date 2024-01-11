@@ -5,6 +5,7 @@ import {
     type AuthVerifyMutationPayload,
     type CreateUserMutationInput,
     type CreateUserMutationPayload,
+    type ErrorType,
     type UserType
 } from "@/gql";
 import { apolloClient } from "@/utils";
@@ -47,6 +48,10 @@ const useAuthStore = defineStore("authStore", () => {
         password: string,
         rememberMe?: boolean
     ) {
+        const rv: {
+            data?: AuthSignInMutationPayload;
+            error?: ApolloError | true;
+        } = {};
         try {
             const result = await client.mutate<{
                 authSignIn: AuthSignInMutationPayload;
@@ -64,16 +69,22 @@ const useAuthStore = defineStore("authStore", () => {
                 `,
                 variables: { email, password }
             });
-            const data = result.data?.authSignIn;
-            setToken(data?.token, rememberMe);
-            _signedIn.value = data?.user;
-            return data;
+            const data = result.data!.authSignIn;
+            setToken(data.token, rememberMe);
+            _signedIn.value = data.user;
+            rv.data = data;
         } catch (err: any) {
-            if (err instanceof ApolloError) return err;
+            if (err instanceof ApolloError) rv.error = err;
+            else rv.error = true;
         }
+        return rv;
     }
 
     async function verify(token?: string | null) {
+        const rv: {
+            data?: AuthVerifyMutationPayload;
+            error?: ApolloError | true;
+        } = {};
         if (!token) token = getToken();
         if (!token) return;
         try {
@@ -92,15 +103,21 @@ const useAuthStore = defineStore("authStore", () => {
                 `,
                 variables: { token }
             });
-            const data = result.data?.authVerify;
+            const data = result.data!.authVerify;
             _signedIn.value = data?.user;
-            return data;
+            rv.data = data;
         } catch (err: any) {
-            if (err instanceof ApolloError) return err;
+            if (err instanceof ApolloError) rv.error = err;
+            else rv.error = true;
         }
+        return rv;
     }
 
     async function signUp(user: CreateUserMutationInput) {
+        const rv: {
+            data?: UserType;
+            error?: ApolloError | ErrorType[] | true;
+        } = {};
         try {
             const result = await client.mutate<{
                 authSignUp: CreateUserMutationPayload;
@@ -121,11 +138,14 @@ const useAuthStore = defineStore("authStore", () => {
                 `,
                 variables: { user }
             });
-            const data = result.data?.authSignUp;
-            return data;
+            const data = result.data!.authSignUp;
+            if (!data.data) rv.error = data.errors;
+            else rv.data = data.data;
         } catch (err: any) {
-            if (err instanceof ApolloError) return err;
+            if (err instanceof ApolloError) rv.error = err;
+            else rv.error = true;
         }
+        return rv;
     }
 
     function signOut() {

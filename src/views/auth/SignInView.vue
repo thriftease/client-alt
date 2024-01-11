@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
 import { useAuthStore } from "@/stores";
-import { validators } from "@/utils";
-import { ApolloError } from "@apollo/client/core";
+import { handleError, validators } from "@/utils";
 import useVuelidate from "@vuelidate/core";
 import { ref } from "vue";
 
@@ -31,7 +30,10 @@ async function submit() {
             data.value.password,
             data.value.rememberMe
         );
-        if (res instanceof ApolloError) alert(res.message);
+        const payload = handleError(res);
+        if (payload) {
+            alert(`Signed in user "${payload.user!.fullName}"!`);
+        }
     }
     submitting.value = false;
 }

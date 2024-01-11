@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
 import { useAuthStore } from "@/stores";
-import { i18nClient, validators } from "@/utils";
-import { ApolloError } from "@apollo/client/core";
+import { handleError, validators } from "@/utils";
 import useVuelidate from "@vuelidate/core";
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const authStore = useAuthStore();
 
 const data = ref({
@@ -59,19 +60,10 @@ async function submit() {
     if (await $v.value.$validate()) {
         const user = { ...data.value, passwordConfirmation: undefined };
         const res = await authStore.signUp(user);
-        if (res instanceof ApolloError) alert(res.message);
-        else if (typeof res !== "undefined") {
-            if (!res.data) {
-                const errs = [];
-                for (const e of res.errors) {
-                    errs.push(`${e.field}: ${e.messages.join(", ")}`);
-                }
-                alert(
-                    errs.length
-                        ? errs.join("\n")
-                        : i18nClient.global.t("somethingWentWrong")
-                );
-            }
+        const payload = handleError(res);
+        if (payload) {
+            alert(`Signed up user "${payload.fullName}"!`);
+            router.push({ name: "auth-sign-in" });
         }
     }
     submitting.value = false;
