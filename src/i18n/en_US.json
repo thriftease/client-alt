@@ -3,12 +3,26 @@
         "required": "Value is required",
         "email": "Value is not a valid email address",
         "emailExisting": "Email does not exist",
-        "emailNotExisting": "Email is already existing"
+        "emailNotExisting": "Email is already existing",
+        "minLength": "Value must be at least $params.min characters long",
+        "maxLength": "Value must not be longer than $params.max characters",
+        "hasLowercase": "Value must at least have a lowercase",
+        "hasUppercase": "Value must at least have an uppercase",
+        "hasDigit": "Value must at least have a digit",
+        "hasSpecialCharacter": "Value must at least have a special character",
+        "password": "Value must be a mix of lowercase, uppercase, digit(s), and special character(s)",
+        "passwordConfirmation": "Value must be the same as the password"
     },
     "signIn": "Sign in",
     "email": "Email",
     "password": "Password",
     "rememberMe": "Remember me?",
     "submit": "Submit",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "givenName": "Given name",
+    "middleName": "Middle name",
+    "familyName": "Family name",
+    "suffix": "Suffix",
+    "passwordConfirmation": "Password confirmation",
+    "somethingWentWrong": "Something went wrong"
 }
