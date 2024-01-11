@@ -15,11 +15,7 @@ const data = ref({
 });
 
 const rules = {
-    email: [
-        validators.required,
-        validators.email,
-        validators.emailNotExisting
-    ],
+    email: [validators.required, validators.email],
     password: [validators.required],
     rememberMe: []
 };
