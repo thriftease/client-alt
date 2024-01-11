@@ -57,6 +57,24 @@ export type AccountType = {
     name: Scalars["String"]["output"];
 };
 
+export type AuthApplyResetMutationInput = {
+    clientMutationId?: InputMaybe<Scalars["String"]["input"]>;
+    password: Scalars["String"]["input"];
+    token: Scalars["String"]["input"];
+};
+
+export type AuthApplyResetMutationPayload = {
+    __typename?: "AuthApplyResetMutationPayload";
+    clientMutationId?: Maybe<Scalars["String"]["output"]>;
+    data?: Maybe<UserType>;
+    errors: Array<ErrorType>;
+};
+
+export type AuthSendResetMutationPayload = {
+    __typename?: "AuthSendResetMutationPayload";
+    sent: Scalars["Boolean"]["output"];
+};
+
 export type AuthSignInMutationPayload = {
     __typename?: "AuthSignInMutationPayload";
     payload: Scalars["GenericScalar"]["output"];
@@ -308,6 +326,8 @@ export type ListTransactionsQueryPayload = {
 
 export type Mutation = {
     __typename?: "Mutation";
+    authApplyReset?: Maybe<AuthApplyResetMutationPayload>;
+    authSendReset?: Maybe<AuthSendResetMutationPayload>;
     authSignIn?: Maybe<AuthSignInMutationPayload>;
     authSignUp?: Maybe<CreateUserMutationPayload>;
     authVerify?: Maybe<AuthVerifyMutationPayload>;
@@ -327,6 +347,15 @@ export type Mutation = {
     updateTag?: Maybe<UpdateTagMutationPayload>;
     updateTransaction?: Maybe<UpdateTransactionMutationPayload>;
     updateUser?: Maybe<UpdateUserMutationPayload>;
+};
+
+export type MutationAuthApplyResetArgs = {
+    input: AuthApplyResetMutationInput;
+};
+
+export type MutationAuthSendResetArgs = {
+    email: Scalars["String"]["input"];
+    url: Scalars["String"]["input"];
 };
 
 export type MutationAuthSignInArgs = {
