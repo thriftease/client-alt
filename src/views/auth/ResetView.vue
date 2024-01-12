@@ -14,7 +14,7 @@ const authStore = useAuthStore();
 
 const data = ref({
     token: route.query.token ? (route.query.token as string) : undefined,
-    email: "",
+    email: route.query.email ? (route.query.email as string) : "",
     password: "",
     passwordConfirmation: ""
 });
@@ -47,14 +47,18 @@ const rules = computed(() => (!data.value.token ? sendRules : applyRules));
 
 const $v = useVuelidate(rules, data);
 
+// validate pre-given values upon supply in query params
+if (data.value.token) $v.value.token.$validate();
+if (data.value.email) $v.value.email.$validate();
+
 async function setup() {
     if (data.value.token) {
         const res = await authStore.verifyReset(data.value.token);
         const payload = handleError(res);
         if (payload) {
-            data.value.email = payload.email;
+            $v.value.email.$model = payload.email;
         } else {
-            data.value.token = undefined;
+            $v.value.token.$model = undefined;
             await router.replace({ name: "auth-reset" });
         }
     }
@@ -141,9 +145,13 @@ async function submit() {
         </div>
         <br />
         <div>
-            <router-link :to="{ name: 'auth-sign-in' }">{{
-                $t("signIn")
-            }}</router-link>
+            <router-link
+                :to="{
+                    name: 'auth-sign-in',
+                    query: { email: data.email.trim() || undefined }
+                }"
+                >{{ $t("signIn") }}</router-link
+            >
             <br />
             <button
                 type="submit"

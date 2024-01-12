@@ -4,11 +4,13 @@ import { useAuthStore } from "@/stores";
 import { handleError, validators } from "@/utils";
 import useVuelidate from "@vuelidate/core";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const authStore = useAuthStore();
 
 const data = ref({
-    email: "",
+    email: route.query.email ? (route.query.email as string) : "",
     password: "",
     rememberMe: false
 });
@@ -20,6 +22,9 @@ const rules = {
 };
 
 const $v = useVuelidate(rules, data);
+
+// validate pre-given values upon supply in query params
+if (data.value.email) $v.value.email.$validate();
 
 const submitting = ref(false);
 async function submit() {
@@ -85,13 +90,21 @@ async function submit() {
         </div>
         <br />
         <div>
-            <router-link :to="{ name: 'auth-reset' }">{{
-                $t("forgotPassword")
-            }}</router-link>
+            <router-link
+                :to="{
+                    name: 'auth-reset',
+                    query: { email: data.email.trim() || undefined }
+                }"
+                >{{ $t("forgotPassword") }}</router-link
+            >
             <br />
-            <router-link :to="{ name: 'auth-sign-up' }">{{
-                $t("signUp")
-            }}</router-link>
+            <router-link
+                :to="{
+                    name: 'auth-sign-up',
+                    query: { email: data.email.trim() || undefined }
+                }"
+                >{{ $t("signUp") }}</router-link
+            >
             <br />
             <button
                 type="submit"
