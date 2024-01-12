@@ -20,10 +20,14 @@ const router = createRouter({
         },
         {
             path: "/auth",
-            name: "auth",
             meta: { authed: false },
             component: () => import("@/views/AuthView.vue"),
             children: [
+                {
+                    path: "",
+                    name: "auth",
+                    redirect: { name: "auth-sign-in" }
+                },
                 {
                     path: "sign-in",
                     name: "auth-sign-in",
