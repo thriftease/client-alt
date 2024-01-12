@@ -1,8 +1,12 @@
 import {
     errorFragment,
     userFragment,
+    type AuthApplyResetMutationInput,
+    type AuthApplyResetMutationPayload,
+    type AuthSendResetMutationPayload,
     type AuthSignInMutationPayload,
     type AuthVerifyMutationPayload,
+    type AuthVerifyResetMutationPayload,
     type CreateUserMutationInput,
     type CreateUserMutationPayload,
     type ErrorType,
@@ -13,8 +17,11 @@ import { ApolloError } from "@apollo/client/core";
 import { gql } from "graphql-tag";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const useAuthStore = defineStore("authStore", () => {
+    const router = useRouter();
+
     const client = apolloClient;
     const token_key = "auth_token";
 
@@ -153,12 +160,115 @@ const useAuthStore = defineStore("authStore", () => {
         _signedIn.value = undefined;
     }
 
+    const resetUrl =
+        window.location.origin +
+        router.resolve({ name: "auth-reset" }).href +
+        "?token={token}";
+
+    async function sendReset(email: string) {
+        const rv: {
+            data?: boolean;
+            error?: ApolloError | true;
+        } = {};
+        try {
+            const result = await client.mutate<{
+                authSendReset: AuthSendResetMutationPayload;
+            }>({
+                mutation: gql`
+                    mutation AuthSendReset($email: String!, $url: String!) {
+                        authSendReset(email: $email, url: $url) {
+                            sent
+                        }
+                    }
+                `,
+                variables: { email, url: resetUrl }
+            });
+            const data = result.data!.authSendReset;
+            rv.data = data.sent;
+        } catch (err: any) {
+            if (err instanceof ApolloError) rv.error = err;
+            else rv.error = true;
+        }
+        console.log(rv);
+        return rv;
+    }
+
+    async function verifyReset(token: string) {
+        const rv: {
+            data?: UserType;
+            error?: ApolloError | true;
+        } = {};
+        try {
+            const result = await client.mutate<{
+                authVerifyReset: AuthVerifyResetMutationPayload;
+            }>({
+                mutation: gql`
+                    ${userFragment}
+                    mutation AuthVerifyReset($token: String!) {
+                        authVerifyReset(token: $token) {
+                            user {
+                                ...userFragment
+                            }
+                        }
+                    }
+                `,
+                variables: { token }
+            });
+            const data = result.data!.authVerifyReset;
+            if (data.user) rv.data = data.user;
+        } catch (err: any) {
+            if (err instanceof ApolloError) rv.error = err;
+            else rv.error = true;
+        }
+        return rv;
+    }
+
+    async function applyReset(reset: AuthApplyResetMutationInput) {
+        const rv: {
+            data?: UserType;
+            error?: ApolloError | ErrorType[] | true;
+        } = {};
+        try {
+            const result = await client.mutate<{
+                authApplyReset: AuthApplyResetMutationPayload;
+            }>({
+                mutation: gql`
+                    ${errorFragment}
+                    ${userFragment}
+                    mutation AuthVerifyResest(
+                        $reset: AuthApplyResetMutationInput!
+                    ) {
+                        authApplyReset(input: $reset) {
+                            data {
+                                ...userFragment
+                            }
+                            errors {
+                                ...errorFragment
+                            }
+                        }
+                    }
+                `,
+                variables: { reset }
+            });
+            const data = result.data!.authApplyReset;
+            if (!data.data) rv.error = data.errors;
+            else rv.data = data.data;
+        } catch (err: any) {
+            if (err instanceof ApolloError) rv.error = err;
+            else rv.error = true;
+        }
+        return rv;
+    }
+
     return {
         signIn,
         verify,
         signOut,
         signedIn,
-        signUp
+        signUp,
+        sendReset,
+        verifyReset,
+        applyReset
     };
 });
 
