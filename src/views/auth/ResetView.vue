@@ -118,6 +118,8 @@ async function submit() {
                 id="password"
                 name="password"
                 type="password"
+                :minlength="applyRules.password.minLength.$params.min"
+                :maxlength="applyRules.password.maxLength.$params.max"
                 v-model="$v.password.$model"
             />
             <FieldErrorsPart
