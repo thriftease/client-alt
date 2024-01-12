@@ -26,5 +26,6 @@
     "passwordConfirmation": "Password confirmation",
     "somethingWentWrong": "Something went wrong",
     "sendReset": "Reset password link",
-    "applyReset": "Reset password"
+    "applyReset": "Reset password",
+    "forgotPassword": "Forgot password?"
 }

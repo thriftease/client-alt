@@ -85,6 +85,14 @@ async function submit() {
         </div>
         <br />
         <div>
+            <router-link :to="{ name: 'auth-reset' }">{{
+                $t("forgotPassword")
+            }}</router-link>
+            <br />
+            <router-link :to="{ name: 'auth-sign-up' }">{{
+                $t("signUp")
+            }}</router-link>
+            <br />
             <button
                 type="submit"
                 :disabled="submitting || $v.$invalid || !$v.$anyDirty"
