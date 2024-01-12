@@ -25,13 +25,13 @@ const router = createRouter({
             component: () => import("@/views/AuthView.vue"),
             children: [
                 {
-                    path: "/sign-in",
+                    path: "sign-in",
                     name: "auth-sign-in",
                     meta: { title: getTitle($t("signIn")) },
                     component: () => import("@/views/auth/SignInView.vue")
                 },
                 {
-                    path: "/sign-up",
+                    path: "sign-up",
                     name: "auth-sign-up",
                     meta: { title: getTitle($t("signUp")) },
                     component: () => import("@/views/auth/SignUpView.vue")
