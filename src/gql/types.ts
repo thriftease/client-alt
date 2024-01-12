@@ -89,6 +89,11 @@ export type AuthVerifyMutationPayload = {
     user?: Maybe<UserType>;
 };
 
+export type AuthVerifyResetMutationPayload = {
+    __typename?: "AuthVerifyResetMutationPayload";
+    user?: Maybe<UserType>;
+};
+
 export type CreateAccountMutationInput = {
     clientMutationId?: InputMaybe<Scalars["String"]["input"]>;
     currency: Scalars["ID"]["input"];
@@ -331,6 +336,7 @@ export type Mutation = {
     authSignIn?: Maybe<AuthSignInMutationPayload>;
     authSignUp?: Maybe<CreateUserMutationPayload>;
     authVerify?: Maybe<AuthVerifyMutationPayload>;
+    authVerifyReset?: Maybe<AuthVerifyResetMutationPayload>;
     createAccount?: Maybe<CreateAccountMutationPayload>;
     createCurrency?: Maybe<CreateCurrencyMutationPayload>;
     createTag?: Maybe<CreateTagMutationPayload>;
@@ -369,6 +375,10 @@ export type MutationAuthSignUpArgs = {
 
 export type MutationAuthVerifyArgs = {
     token?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type MutationAuthVerifyResetArgs = {
+    token: Scalars["String"]["input"];
 };
 
 export type MutationCreateAccountArgs = {
