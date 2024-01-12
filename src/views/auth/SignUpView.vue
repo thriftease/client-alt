@@ -22,6 +22,10 @@ const data = ref({
 
 const rules = {
     ...userRules,
+    email: {
+        ...userRules.email,
+        emailNotExisting: validators.emailNotExisting
+    },
     passwordConfirmation: {
         passwordConfirmation: validators.passwordConfirmation(
             computed(() => data.value.password)

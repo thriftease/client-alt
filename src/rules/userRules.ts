@@ -4,8 +4,7 @@ const userRules = {
     email: {
         required: validators.required,
         email: validators.email,
-        maxLength: validators.maxLength(50),
-        emailNotExisting: validators.emailNotExisting
+        maxLength: validators.maxLength(50)
     },
     password: {
         required: validators.required,
