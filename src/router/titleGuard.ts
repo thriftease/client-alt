@@ -7,7 +7,9 @@ async function titleGuard(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     from: RouteLocationNormalized
 ) {
-    document.title = to.meta.title || defaultTitle;
+    if (to.meta.title instanceof Function)
+        document.title = to.meta.title(to, from);
+    else document.title = to.meta.title || defaultTitle;
     return true;
 }
 
