@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
+import { userRules } from "@/rules";
 import { useAuthStore } from "@/stores";
 import { handleError, validators } from "@/utils";
 import useVuelidate from "@vuelidate/core";
@@ -20,31 +21,7 @@ const data = ref({
 });
 
 const rules = {
-    email: {
-        required: validators.required,
-        email: validators.email,
-        maxLength: validators.maxLength(50),
-        emailNotExisting: validators.emailNotExisting
-    },
-    password: {
-        required: validators.required,
-        hasLowercase: validators.hasLowercase,
-        hasUppercase: validators.hasUppercase,
-        hasDigit: validators.hasDigit,
-        hasSpecialCharacter: validators.hasSpecialCharacter,
-        minLength: validators.minLength(7),
-        maxLength: validators.maxLength(128)
-    },
-    givenName: {
-        required: validators.required,
-        maxLength: validators.maxLength(50)
-    },
-    middleName: { maxLength: validators.maxLength(50) },
-    familyName: {
-        required: validators.required,
-        maxLength: validators.maxLength(50)
-    },
-    suffix: { maxLength: validators.maxLength(20) },
+    ...userRules,
     passwordConfirmation: {
         passwordConfirmation: validators.passwordConfirmation(
             computed(() => data.value.password)
