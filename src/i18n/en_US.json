@@ -24,5 +24,7 @@
     "familyName": "Family name",
     "suffix": "Suffix",
     "passwordConfirmation": "Password confirmation",
-    "somethingWentWrong": "Something went wrong"
+    "somethingWentWrong": "Something went wrong",
+    "sendReset": "Reset password link",
+    "applyReset": "Reset password"
 }

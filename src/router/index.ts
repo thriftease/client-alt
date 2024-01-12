@@ -39,6 +39,21 @@ const router = createRouter({
                     name: "auth-sign-up",
                     meta: { title: getTitle($t("signUp")) },
                     component: () => import("@/views/auth/SignUpView.vue")
+                },
+                {
+                    path: "reset",
+                    name: "auth-reset",
+                    meta: {
+                        title: (to) =>
+                            getTitle(
+                                $t(
+                                    !to.query.token
+                                        ? "sendReset"
+                                        : "applyReset"
+                                )
+                            )
+                    },
+                    component: () => import("@/views/auth/ResetView.vue")
                 }
             ]
         }
