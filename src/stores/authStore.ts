@@ -189,7 +189,6 @@ const useAuthStore = defineStore("authStore", () => {
             if (err instanceof ApolloError) rv.error = err;
             else rv.error = true;
         }
-        console.log(rv);
         return rv;
     }
 
