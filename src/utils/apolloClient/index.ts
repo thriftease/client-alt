@@ -1,3 +1,4 @@
+import authLink from "@/utils/apolloClient/authLink";
 import i18nLink from "@/utils/apolloClient/i18nLink";
 import {
     ApolloClient,
@@ -16,7 +17,7 @@ const cache = new InMemoryCache();
 
 // Create the apollo client
 const apolloClient = new ApolloClient({
-    link: i18nLink.concat(httpLink),
+    link: i18nLink.concat(authLink).concat(httpLink),
     cache
 });
 
