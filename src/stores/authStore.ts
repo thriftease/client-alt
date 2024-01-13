@@ -1,6 +1,4 @@
 import {
-    errorFragment,
-    userFragment,
     type AuthApplyResetMutationInput,
     type AuthApplyResetMutationPayload,
     type AuthSendResetMutationPayload,
@@ -64,7 +62,6 @@ const useAuthStore = defineStore("authStore", () => {
                 authSignIn: AuthSignInMutationPayload;
             }>({
                 mutation: gql`
-                    ${userFragment}
                     mutation AuthSignIn($email: String!, $password: String!) {
                         authSignIn(email: $email, password: $password) {
                             token
@@ -99,7 +96,6 @@ const useAuthStore = defineStore("authStore", () => {
                 authVerify: AuthVerifyMutationPayload;
             }>({
                 mutation: gql`
-                    ${userFragment}
                     mutation AuthVerify($token: String!) {
                         authVerify(token: $token) {
                             user {
@@ -130,8 +126,6 @@ const useAuthStore = defineStore("authStore", () => {
                 authSignUp: CreateUserMutationPayload;
             }>({
                 mutation: gql`
-                    ${errorFragment}
-                    ${userFragment}
                     mutation AuthSignUp($user: CreateUserMutationInput!) {
                         authSignUp(input: $user) {
                             data {
@@ -202,7 +196,6 @@ const useAuthStore = defineStore("authStore", () => {
                 authVerifyReset: AuthVerifyResetMutationPayload;
             }>({
                 mutation: gql`
-                    ${userFragment}
                     mutation AuthVerifyReset($token: String!) {
                         authVerifyReset(token: $token) {
                             user {
@@ -232,8 +225,6 @@ const useAuthStore = defineStore("authStore", () => {
                 authApplyReset: AuthApplyResetMutationPayload;
             }>({
                 mutation: gql`
-                    ${errorFragment}
-                    ${userFragment}
                     mutation AuthVerifyResest(
                         $reset: AuthApplyResetMutationInput!
                     ) {
@@ -267,7 +258,9 @@ const useAuthStore = defineStore("authStore", () => {
         signUp,
         sendReset,
         verifyReset,
-        applyReset
+        applyReset,
+        setToken,
+        getToken
     };
 });
 
