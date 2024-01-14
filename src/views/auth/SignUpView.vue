@@ -45,9 +45,12 @@ async function submit() {
     if (await $v.value.$validate()) {
         const user = { ...data.value, passwordConfirmation: undefined };
         const res = await authStore.signUp(user);
-        const payload = handleError(res);
+        const payload = handleError({
+            data: res.data.value,
+            error: res.error.value
+        });
         if (payload) {
-            alert(`Signed up user "${payload.fullName}"!`);
+            alert(`Signed up user "${payload.result.data!.fullName}"!`);
             router.push({ name: "auth-sign-in" });
         }
     }

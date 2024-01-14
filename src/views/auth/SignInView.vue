@@ -16,7 +16,7 @@ const data = ref({
 });
 
 const rules = {
-    email: [validators.required, validators.email, validators.emailExisting],
+    email: [validators.required, validators.email],
     password: [validators.required],
     rememberMe: []
 };
@@ -30,14 +30,17 @@ const submitting = ref(false);
 async function submit() {
     submitting.value = true;
     if (await $v.value.$validate()) {
-        const res = await authStore.signIn(
-            data.value.email,
-            data.value.password,
-            data.value.rememberMe
-        );
-        const payload = handleError(res);
+        const res = await authStore.signIn({
+            email: data.value.email,
+            password: data.value.password,
+            rememberMe: data.value.rememberMe
+        });
+        const payload = handleError({
+            data: res.data.value,
+            error: res.error.value
+        });
         if (payload) {
-            alert(`Signed in user "${payload.user!.fullName}"!`);
+            alert(`Signed in user "${payload.result.user!.fullName}"!`);
         }
     }
     submitting.value = false;

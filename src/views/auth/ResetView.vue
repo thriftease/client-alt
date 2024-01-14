@@ -23,8 +23,7 @@ const sendRules = {
     token: {},
     email: {
         required: validators.required,
-        email: validators.email,
-        emailExisting: validators.emailExisting
+        email: validators.email
     },
     password: {},
     passwordConfirmation: {}
@@ -54,9 +53,12 @@ if (data.value.email) $v.value.email.$validate();
 async function setup() {
     if (data.value.token) {
         const res = await authStore.verifyReset(data.value.token);
-        const payload = handleError(res);
+        const payload = handleError({
+            data: res.data.value,
+            error: res.error.value
+        });
         if (payload) {
-            $v.value.email.$model = payload.email;
+            $v.value.email.$model = payload.result.user!.email;
         } else {
             $v.value.token.$model = undefined;
             await router.replace({ name: "auth-reset" });
@@ -71,16 +73,28 @@ async function submit() {
     if (await $v.value.$validate()) {
         if (!data.value.token) {
             const res = await authStore.sendReset(data.value.email);
-            const payload = handleError(res);
+            const payload = handleError({
+                data: res.data.value,
+                error: res.error.value
+            });
             if (payload) {
-                alert(`Sent password reset link!`);
+                if (payload.result.sent) {
+                    alert(`Sent password reset link!`);
+                } else {
+                    alert(
+                        `Password reset link has not been sent. Please make sure that the email provided is registered.`
+                    );
+                }
             }
         } else {
             const res = await authStore.applyReset({
                 token: data.value.token,
                 password: data.value.password
             });
-            const payload = handleError(res);
+            const payload = handleError({
+                data: res.data.value,
+                error: res.error.value
+            });
             if (payload) {
                 alert(`Password has been updated!`);
                 router.replace({ name: "auth-sign-in" });

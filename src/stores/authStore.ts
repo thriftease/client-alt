@@ -7,20 +7,18 @@ import {
     type AuthVerifyResetMutationPayload,
     type CreateUserMutationInput,
     type CreateUserMutationPayload,
-    type ErrorType,
     type UserType
 } from "@/gql";
-import { apolloClient } from "@/utils";
-import { ApolloError } from "@apollo/client/core";
+import { apolloMutate } from "@/utils";
 import { gql } from "graphql-tag";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
+type SignInAltVariables = { email: string; password: string };
+
 const useAuthStore = defineStore("authStore", () => {
     const router = useRouter();
-
-    const client = apolloClient;
     const token_key = "auth_token";
 
     const _signedIn = ref<UserType | null>();
@@ -49,104 +47,76 @@ const useAuthStore = defineStore("authStore", () => {
     }
 
     async function signIn(
-        email: string,
-        password: string,
-        rememberMe?: boolean
+        vars: SignInAltVariables & { rememberMe?: boolean }
     ) {
-        const rv: {
-            data?: AuthSignInMutationPayload;
-            error?: ApolloError | true;
-        } = {};
-        try {
-            const result = await client.mutate<{
-                authSignIn: AuthSignInMutationPayload;
-            }>({
-                mutation: gql`
-                    mutation AuthSignIn($email: String!, $password: String!) {
-                        authSignIn(email: $email, password: $password) {
-                            token
-                            user {
-                                ...userFragment
-                            }
+        const { data, error, loading } = await apolloMutate<
+            SignInAltVariables,
+            { result: AuthSignInMutationPayload }
+        >(
+            { email: vars.email, password: vars.password },
+            gql`
+                mutation AuthSignIn($email: String!, $password: String!) {
+                    result: authSignIn(email: $email, password: $password) {
+                        token
+                        user {
+                            ...userFragment
                         }
                     }
-                `,
-                variables: { email, password }
-            });
-            const data = result.data!.authSignIn;
-            setToken(data.token, rememberMe);
-            _signedIn.value = data.user;
-            rv.data = data;
-        } catch (err: any) {
-            if (err instanceof ApolloError) rv.error = err;
-            else rv.error = true;
+                }
+            `
+        );
+        if (data.value) {
+            setToken(data.value.result.token, vars.rememberMe);
+            _signedIn.value = data.value.result.user;
         }
-        return rv;
+        return { data, error, loading };
     }
 
     async function verify(token?: string | null) {
-        const rv: {
-            data?: AuthVerifyMutationPayload;
-            error?: ApolloError | true;
-        } = {};
         if (!token) token = getToken();
         if (!token) return;
-        try {
-            const result = await client.mutate<{
-                authVerify: AuthVerifyMutationPayload;
-            }>({
-                mutation: gql`
-                    mutation AuthVerify($token: String!) {
-                        authVerify(token: $token) {
-                            user {
-                                ...userFragment
-                            }
+
+        const { data, error, loading } = await apolloMutate<
+            { token: string },
+            { result: AuthVerifyMutationPayload }
+        >(
+            { token },
+            gql`
+                mutation AuthVerify($token: String!) {
+                    result: authVerify(token: $token) {
+                        user {
+                            ...userFragment
                         }
                     }
-                `,
-                variables: { token }
-            });
-            const data = result.data!.authVerify;
-            _signedIn.value = data?.user;
-            rv.data = data;
-        } catch (err: any) {
-            if (err instanceof ApolloError) rv.error = err;
-            else rv.error = true;
+                }
+            `
+        );
+        if (data.value) {
+            _signedIn.value = data.value.result.user;
         }
-        return rv;
+        return { data, error, loading };
     }
 
     async function signUp(user: CreateUserMutationInput) {
-        const rv: {
-            data?: UserType;
-            error?: ApolloError | ErrorType[] | true;
-        } = {};
-        try {
-            const result = await client.mutate<{
-                authSignUp: CreateUserMutationPayload;
-            }>({
-                mutation: gql`
-                    mutation AuthSignUp($user: CreateUserMutationInput!) {
-                        authSignUp(input: $user) {
-                            data {
-                                ...userFragment
-                            }
-                            errors {
-                                ...errorFragment
-                            }
+        const { data, error, loading } = await apolloMutate<
+            { user: CreateUserMutationInput },
+            { result: CreateUserMutationPayload }
+        >(
+            { user },
+            gql`
+                mutation AuthSignUp($user: CreateUserMutationInput!) {
+                    result: authSignUp(input: $user) {
+                        data {
+                            ...userFragment
+                        }
+                        errors {
+                            ...errorFragment
                         }
                     }
-                `,
-                variables: { user }
-            });
-            const data = result.data!.authSignUp;
-            if (!data.data) rv.error = data.errors;
-            else rv.data = data.data;
-        } catch (err: any) {
-            if (err instanceof ApolloError) rv.error = err;
-            else rv.error = true;
-        }
-        return rv;
+                }
+            `
+        );
+        return { data, error, loading };
     }
 
     function signOut() {
@@ -160,94 +130,63 @@ const useAuthStore = defineStore("authStore", () => {
         "?token={token}";
 
     async function sendReset(email: string) {
-        const rv: {
-            data?: boolean;
-            error?: ApolloError | true;
-        } = {};
-        try {
-            const result = await client.mutate<{
-                authSendReset: AuthSendResetMutationPayload;
-            }>({
-                mutation: gql`
-                    mutation AuthSendReset($email: String!, $url: String!) {
-                        authSendReset(email: $email, url: $url) {
-                            sent
-                        }
+        const { data, error, loading } = await apolloMutate<
+            { email: string; url: string },
+            { result: AuthSendResetMutationPayload }
+        >(
+            { email, url: resetUrl },
+            gql`
+                mutation AuthSendReset($email: String!, $url: String!) {
+                    result: authSendReset(email: $email, url: $url) {
+                        sent
                     }
-                `,
-                variables: { email, url: resetUrl }
-            });
-            const data = result.data!.authSendReset;
-            rv.data = data.sent;
-        } catch (err: any) {
-            if (err instanceof ApolloError) rv.error = err;
-            else rv.error = true;
-        }
-        return rv;
+                }
+            `
+        );
+        return { data, error, loading };
     }
 
     async function verifyReset(token: string) {
-        const rv: {
-            data?: UserType;
-            error?: ApolloError | true;
-        } = {};
-        try {
-            const result = await client.mutate<{
-                authVerifyReset: AuthVerifyResetMutationPayload;
-            }>({
-                mutation: gql`
-                    mutation AuthVerifyReset($token: String!) {
-                        authVerifyReset(token: $token) {
-                            user {
-                                ...userFragment
-                            }
+        const { data, error, loading } = await apolloMutate<
+            { token: string },
+            { result: AuthVerifyResetMutationPayload }
+        >(
+            { token },
+            gql`
+                mutation AuthVerifyReset($token: String!) {
+                    result: authVerifyReset(token: $token) {
+                        user {
+                            ...userFragment
                         }
                     }
-                `,
-                variables: { token }
-            });
-            const data = result.data!.authVerifyReset;
-            if (data.user) rv.data = data.user;
-        } catch (err: any) {
-            if (err instanceof ApolloError) rv.error = err;
-            else rv.error = true;
-        }
-        return rv;
+                }
+            `
+        );
+        return { data, error, loading };
     }
 
     async function applyReset(reset: AuthApplyResetMutationInput) {
-        const rv: {
-            data?: UserType;
-            error?: ApolloError | ErrorType[] | true;
-        } = {};
-        try {
-            const result = await client.mutate<{
-                authApplyReset: AuthApplyResetMutationPayload;
-            }>({
-                mutation: gql`
-                    mutation AuthVerifyResest(
-                        $reset: AuthApplyResetMutationInput!
-                    ) {
-                        authApplyReset(input: $reset) {
-                            data {
-                                ...userFragment
-                            }
-                            errors {
-                                ...errorFragment
-                            }
+        const { data, error, loading } = await apolloMutate<
+            { reset: AuthApplyResetMutationInput },
+            { result: AuthApplyResetMutationPayload }
+        >(
+            { reset: reset },
+            gql`
+                mutation AuthVerifyResest(
+                    $reset: AuthApplyResetMutationInput!
+                ) {
+                    result: authApplyReset(input: $reset) {
+                        data {
+                            ...userFragment
+                        }
+                        errors {
+                            ...errorFragment
                         }
                     }
-                `,
-                variables: { reset }
-            });
-            const data = result.data!.authApplyReset;
-            if (!data.data) rv.error = data.errors;
-            else rv.data = data.data;
-        } catch (err: any) {
-            if (err instanceof ApolloError) rv.error = err;
-            else rv.error = true;
-        }
-        return rv;
+                }
+            `
+        );
+        return { data, error, loading };
     }
 
     return {
