@@ -86,6 +86,7 @@ const useCurrencyStore = defineStore("currencyStore", () => {
             filter?: CurrencyFilterQueryInput;
             order?: CurrencyOrderQueryInput[];
             paginator?: PaginatorQueryInput;
+            options?: {};
         } = {}
     ) {
         const { data, error, loading } = await apolloQuery<
@@ -112,7 +113,8 @@ const useCurrencyStore = defineStore("currencyStore", () => {
                         }
                     }
                 }
-            `
+            `,
+            params.options
         );
         return { data, error, loading };
     }
@@ -125,7 +127,7 @@ const useCurrencyStore = defineStore("currencyStore", () => {
             { input },
             gql`
                 query GetCurrency($input: GetCurrencyQueryInput!) {
-                    getCurrency(input: $input) {
+                    result: getCurrency(input: $input) {
                         data {
                             ...currencyFragment
                         }

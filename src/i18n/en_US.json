@@ -11,7 +11,8 @@
         "hasDigit": "Value must at least have a digit",
         "hasSpecialCharacter": "Value must at least have a special character",
         "password": "Value must be a mix of lowercase, uppercase, digit(s), and special character(s)",
-        "passwordConfirmation": "Value must be the same as the password"
+        "passwordConfirmation": "Value must be the same as the password",
+        "abbreviationNotExisting": "Abbreviation is already existing"
     },
     "signIn": "Sign in",
     "email": "Email",
@@ -32,5 +33,16 @@
     "signOut": "Sign out",
     "aboutToSignOut": "You're about to sign out your session",
     "currencies": "Currencies",
-    "currency": "Currency"
+    "previous": "Previous",
+    "next": "Next",
+    "actions": "Actions",
+    "view": "View",
+    "add": "Add",
+    "delete": "Delete",
+    "aboutToDelete": "You're about to delete this entry",
+    "currency": "Currency",
+    "abbreviation": "Abbreviation",
+    "name": "Name",
+    "symbol": "Symbol",
+    "preFillCurrency": "Pre-fill using an existing currency"
 }

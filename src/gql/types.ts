@@ -170,6 +170,7 @@ export type CreateUserMutationPayload = {
 
 export type CurrencyFilterQueryInput = {
     abbreviation_Icontains?: InputMaybe<Scalars["String"]["input"]>;
+    abbreviation_Iexact?: InputMaybe<Scalars["String"]["input"]>;
     id_Icontains?: InputMaybe<Scalars["Decimal"]["input"]>;
     name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
     symbol_Icontains?: InputMaybe<Scalars["String"]["input"]>;

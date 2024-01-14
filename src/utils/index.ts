@@ -45,7 +45,12 @@ function handleError<T>(
 async function apolloRun<
     TInput extends OperationVariables,
     TPayload extends { [key: string]: any }
->(type: "mutation" | "query", input: TInput, document: DocumentNode) {
+>(
+    type: "mutation" | "query",
+    input: TInput,
+    document: DocumentNode,
+    options?: { [key: string]: any }
+) {
     const rv = {
         data: ref<TPayload>(),
         error: ref<ApolloError>(),
@@ -55,12 +60,14 @@ async function apolloRun<
     try {
         if (type === "mutation") {
             const result = await apolloClient.mutate<TPayload>({
+                ...(options ?? {}),
                 mutation: document,
                 variables: input
             });
             rv.data.value = result.data!;
         } else {
             const result = await apolloClient.query<TPayload>({
+                ...(options ?? {}),
                 query: document,
                 variables: input
             });
@@ -76,15 +83,15 @@ async function apolloRun<
 async function apolloQuery<
     TInput extends OperationVariables,
     TPayload extends { [key: string]: any }
->(input: TInput, document: DocumentNode) {
-    return apolloRun<TInput, TPayload>("query", input, document);
+>(input: TInput, document: DocumentNode, options?: { [key: string]: any }) {
+    return apolloRun<TInput, TPayload>("query", input, document, options);
 }
 
 async function apolloMutate<
     TInput extends OperationVariables,
     TPayload extends { [key: string]: any }
->(input: TInput, document: DocumentNode) {
-    return apolloRun<TInput, TPayload>("mutation", input, document);
+>(input: TInput, document: DocumentNode, options?: { [key: string]: any }) {
+    return apolloRun<TInput, TPayload>("mutation", input, document, options);
 }
 
 export {
