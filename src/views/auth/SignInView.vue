@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
+import router from "@/router";
 import { useAuthStore } from "@/stores";
 import { handleError, validators } from "@/utils";
 import useVuelidate from "@vuelidate/core";
@@ -40,7 +41,7 @@ async function submit() {
             error: res.error.value
         });
         if (payload) {
-            alert(`Signed in user "${payload.result.user!.fullName}"!`);
+            router.replace({ name: "dashboard" });
         }
     }
     submitting.value = false;
