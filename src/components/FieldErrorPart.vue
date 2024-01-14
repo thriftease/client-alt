@@ -18,3 +18,9 @@ defineProps({
         {{ typeof error === "string" ? error : error?.$message }}
     </div>
 </template>
+
+<style scoped>
+div {
+    color: red;
+}
+</style>
