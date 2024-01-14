@@ -27,5 +27,10 @@
     "somethingWentWrong": "Something went wrong",
     "sendReset": "Reset password link",
     "applyReset": "Reset password",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "menu": "Menu",
+    "signOut": "Sign out",
+    "aboutToSignOut": "You're about to sign out your session",
+    "currencies": "Currencies",
+    "currency": "Currency"
 }

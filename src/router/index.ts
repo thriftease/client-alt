@@ -56,6 +56,32 @@ const router = createRouter({
                     component: () => import("@/views/auth/ResetView.vue")
                 }
             ]
+        },
+        {
+            path: "/dashboard",
+            meta: { authed: true },
+            component: () => import("@/views/DashboardView.vue"),
+            children: [
+                {
+                    path: "",
+                    name: "dashboard",
+                    redirect: { name: "dashboard-currencies" }
+                },
+                {
+                    path: "currencies",
+                    name: "dashboard-currencies",
+                    meta: { title: getTitle($t("currencies")) },
+                    component: () =>
+                        import("@/views/dashboard/CurrenciesView.vue")
+                },
+                {
+                    path: "currencies/:id(new|0|[1-9]\\d*)",
+                    name: "dashboard-currencies-currency",
+                    meta: { title: getTitle($t("currency")) },
+                    component: () =>
+                        import("@/views/dashboard/currencies/CurrencyView.vue")
+                }
+            ]
         }
     ]
 });
