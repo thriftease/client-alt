@@ -18,6 +18,7 @@
         "@vue/apollo-composable": "^4.0.0-beta.12",
         "@vuelidate/core": "^2.0.3",
         "@vuelidate/validators": "^2.0.4",
+        "axios": "^1.6.5",
         "graphql": "^16.8.1",
         "graphql-tag": "^2.12.6",
         "pinia": "^2.1.7",

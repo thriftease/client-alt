@@ -1,4 +1,10 @@
-import { errorFragment, userFragment } from "@/gql";
+import {
+    currencyFragment,
+    errorFragment,
+    pageFragment,
+    paginatorFragment,
+    userFragment
+} from "@/gql";
 import authLink from "@/utils/apolloClient/authLink";
 import i18nLink from "@/utils/apolloClient/i18nLink";
 import { createFragmentRegistry } from "@apollo/client/cache";
@@ -16,7 +22,13 @@ const httpLink = createHttpLink({
 
 // Cache implementation
 const cache = new InMemoryCache({
-    fragments: createFragmentRegistry(errorFragment, userFragment)
+    fragments: createFragmentRegistry(
+        errorFragment,
+        userFragment,
+        pageFragment,
+        paginatorFragment,
+        currencyFragment
+    )
 });
 
 // Create the apollo client
