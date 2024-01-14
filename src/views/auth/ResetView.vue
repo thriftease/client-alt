@@ -117,10 +117,10 @@ async function submit() {
                 name="email"
                 type="email"
                 :readonly="!!data.token"
+                :disabled="!!data.token"
                 v-model="$v.email.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.email.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -137,7 +137,6 @@ async function submit() {
                 v-model="$v.password.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.password.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -154,7 +153,6 @@ async function submit() {
                 v-model="$v.passwordConfirmation.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.passwordConfirmation.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>

@@ -61,7 +61,6 @@ async function submit() {
                 v-model="$v.email.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.email.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -76,7 +75,6 @@ async function submit() {
                 v-model="$v.password.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.password.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>

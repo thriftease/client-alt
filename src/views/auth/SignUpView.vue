@@ -73,7 +73,6 @@ async function submit() {
                 v-model="$v.givenName.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.givenName.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -89,7 +88,6 @@ async function submit() {
                 v-model="$v.middleName.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.middleName.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -105,7 +103,6 @@ async function submit() {
                 v-model="$v.familyName.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.familyName.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -121,7 +118,6 @@ async function submit() {
                 v-model="$v.suffix.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.suffix.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -137,7 +133,6 @@ async function submit() {
                 v-model="$v.email.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.email.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -154,7 +149,6 @@ async function submit() {
                 v-model="$v.password.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.password.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
@@ -171,7 +165,6 @@ async function submit() {
                 v-model="$v.passwordConfirmation.$model"
             />
             <FieldErrorsPart
-                class="min-h-6"
                 :errors="$v.passwordConfirmation.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
