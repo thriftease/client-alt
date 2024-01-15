@@ -46,7 +46,11 @@ const searchValue = ref("");
 //         : props.fields.map((e) => e[0]))
 // ]);
 const filter = ref(
-    filterInput.value.fields.length ? filterInput.value.fields[0] : ""
+    filterInput.value.fields.length
+        ? filterInput.value.fields[0]
+        : props.fields.length
+          ? props.fields[0][0]
+          : ""
 );
 
 function search() {
