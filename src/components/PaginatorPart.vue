@@ -14,9 +14,9 @@ const paginatorInput = computed(() => {
 const paginator = ref<PaginatorType>();
 
 defineExpose({ input: paginatorInput, type: paginator });
-const $emits = defineEmits(["input"]);
+const emits = defineEmits(["input"]);
 
-watch(paginatorInput, () => $emits("input"));
+watch(paginatorInput, () => emits("input"));
 
 const _perPage = ref(paginatorInput.value.perPage!);
 const perPage = computed({
@@ -28,16 +28,20 @@ const perPage = computed({
     }
 });
 
-function setPerPage() {
-    router.push({
+function getRoute(page: number, perPage: number, props = {}) {
+    return {
         ...route,
         query: {
             ...route.query,
-            page: paginator.value!.page.current,
-            perPage: perPage.value
+            page,
+            perPage
         },
-        force: true
-    });
+        ...props
+    };
+}
+
+function setPerPage() {
+    router.push(getRoute(paginator.value!.page.current, perPage.value));
 }
 </script>
 
@@ -53,14 +57,7 @@ function setPerPage() {
         />
         <router-link
             v-if="paginator.page.previous"
-            :to="{
-                ...$route,
-                query: {
-                    ...$route.query,
-                    page: paginator.page.previous,
-                    perPage: paginator.perPage
-                }
-            }"
+            :to="getRoute(paginator.page.previous, paginator.perPage)"
             >{{ $t("previous") }}</router-link
         >
         <span v-else>{{ $t("previous") }}</span>
@@ -69,14 +66,7 @@ function setPerPage() {
         &nbsp;
         <router-link
             v-if="paginator.page.next"
-            :to="{
-                ...$route,
-                query: {
-                    ...$route.query,
-                    page: paginator.page.next,
-                    perPage: paginator.perPage
-                }
-            }"
+            :to="getRoute(paginator.page.next, paginator.perPage)"
             >{{ $t("next") }}</router-link
         >
         <span v-else>{{ $t("next") }}</span>
