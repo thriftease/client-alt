@@ -26,9 +26,11 @@ const query = computed(() => {
 
 defineExpose({ query });
 
-const emits = defineEmits(["query"]);
+const emits = defineEmits<{
+    (e: "query", value: typeof query.value): void;
+}>();
 
-watch(query, () => emits("query"));
+watch(query, () => emits("query", query.value));
 
 const _perPage = ref(query.value.perPage);
 const perPage = computed({
