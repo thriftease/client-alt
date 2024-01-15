@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FilterPart from "@/components/FilterPart.vue";
 import PaginatorPart from "@/components/PaginatorPart.vue";
 import { type CurrencyType } from "@/gql";
 import { useCurrencyStore } from "@/stores";
@@ -8,12 +9,14 @@ import { onMounted, ref } from "vue";
 const currencyStore = useCurrencyStore();
 
 const paginator = ref<InstanceType<typeof PaginatorPart>>();
+const filter = ref<InstanceType<typeof FilterPart>>();
 
 const currencies = ref<CurrencyType[]>([]);
 
 async function setup() {
     const res = await currencyStore.list({
         paginator: paginator.value?.input,
+        filter: filter.value?.input,
         options: { fetchPolicy: "network-only" }
     });
     currencies.value = res.data.value?.result.data as CurrencyType[];
@@ -47,6 +50,19 @@ async function del(id: string) {
     <br />
     <table>
         <thead>
+            <tr>
+                <td colspan="4">
+                    <FilterPart
+                        ref="filter"
+                        :fields="[
+                            ['abbreviation_Icontains', $t('abbreviation')],
+                            ['name_Icontains', $t('name')],
+                            ['symbol_Icontains', $t('symbol')]
+                        ]"
+                        @input="setup"
+                    ></FilterPart>
+                </td>
+            </tr>
             <tr>
                 <th>{{ $t("abbreviation") }}</th>
                 <th>{{ $t("name") }}</th>
