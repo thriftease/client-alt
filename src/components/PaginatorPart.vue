@@ -1,24 +1,36 @@
 <script setup lang="ts">
-import type { PaginatorQueryInput, PaginatorType } from "@/gql";
+import type { PaginatorType } from "@/gql";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+const props = defineProps<{
+    value?: PaginatorType;
+}>();
+
 const route = useRoute();
 const router = useRouter();
-const paginatorInput = computed(() => {
-    return {
-        page: route.query.page ? +route.query.page : 1,
-        perPage: route.query.perPage ? +route.query.perPage || 1 : 10
-    } as PaginatorQueryInput;
+
+const query = computed(() => {
+    const rv = {
+        page: 1,
+        perPage: 10
+    };
+    if (route.query.page && !isNaN(+route.query.page)) {
+        rv.page = Math.max(+route.query.page, 1);
+    }
+    if (route.query.perPage && !isNaN(+route.query.perPage)) {
+        rv.perPage = Math.max(+route.query.perPage, 1);
+    }
+    return rv;
 });
-const paginator = ref<PaginatorType>();
 
-defineExpose({ input: paginatorInput, type: paginator });
-const emits = defineEmits(["input"]);
+defineExpose({ query });
 
-watch(paginatorInput, () => emits("input"));
+const emits = defineEmits(["query"]);
 
-const _perPage = ref(paginatorInput.value.perPage!);
+watch(query, () => emits("query"));
+
+const _perPage = ref(query.value.perPage);
 const perPage = computed({
     get() {
         return _perPage.value;
@@ -41,12 +53,13 @@ function getRoute(page: number, perPage: number, props = {}) {
 }
 
 function setPerPage() {
-    router.push(getRoute(paginator.value!.page.current, perPage.value));
+    if (!props.value) return;
+    router.push(getRoute(props.value.page.current, perPage.value));
 }
 </script>
 
 <template>
-    <div v-if="paginator">
+    <div v-if="value">
         <label for="perPage">{{ $t("itemsPerPage") }}</label>
         <input
             id="perPage"
@@ -56,17 +69,17 @@ function setPerPage() {
             v-model="perPage"
         />
         <router-link
-            v-if="paginator.page.previous"
-            :to="getRoute(paginator.page.previous, paginator.perPage)"
+            v-if="value.page.previous"
+            :to="getRoute(value.page.previous, value.perPage)"
             >{{ $t("previous") }}</router-link
         >
         <span v-else>{{ $t("previous") }}</span>
         &nbsp;
-        <span>{{ `${paginator.page.current} / ${paginator.pages}` }}</span>
+        <span>{{ `${value.page.current} / ${value.pages}` }}</span>
         &nbsp;
         <router-link
-            v-if="paginator.page.next"
-            :to="getRoute(paginator.page.next, paginator.perPage)"
+            v-if="value.page.next"
+            :to="getRoute(value.page.next, value.perPage)"
             >{{ $t("next") }}</router-link
         >
         <span v-else>{{ $t("next") }}</span>
