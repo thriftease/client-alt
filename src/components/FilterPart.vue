@@ -18,7 +18,9 @@ const filterInput = computed(() => {
         search: (route.query.search || "") as string,
         fields: (route.query.fields instanceof Array
             ? route.query.fields
-            : [route.query.fields]) as string[]
+            : route.query.fields
+              ? [route.query.fields]
+              : []) as string[]
     };
 });
 
@@ -41,7 +43,7 @@ watch(filterInput, () => {
 });
 onMounted(() => emits("input", filterInput.value));
 
-const searchValue = ref("");
+const searchValue = ref(filterInput.value.search);
 // const filters = ref<string[]>([
 //     ...(filterInput.value.fields.length
 //         ? filterInput.value.fields
