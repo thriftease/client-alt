@@ -1,31 +1,36 @@
 <script setup lang="ts">
 import FilterPart from "@/components/FilterPart.vue";
 import PaginatorPart from "@/components/PaginatorPart.vue";
-import { type CurrencyType } from "@/gql";
+import { type CurrencyType, type PaginatorType } from "@/gql";
 import { useCurrencyStore } from "@/stores";
 import { handleError, i18nClient } from "@/utils";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const currencyStore = useCurrencyStore();
 
 const paginator = ref<InstanceType<typeof PaginatorPart>>();
 const filter = ref<InstanceType<typeof FilterPart>>();
 
 const currencies = ref<CurrencyType[]>([]);
-
+const paginatorValue = ref<PaginatorType>();
 async function setup() {
+    console.log("setup", filter.value?.record);
     const res = await currencyStore.list({
-        paginator: paginator.value?.input,
-        filter: filter.value?.input,
+        paginator: paginator.value?.query,
+        filter: filter.value?.record,
         options: { fetchPolicy: "network-only" }
     });
     currencies.value = res.data.value?.result.data as CurrencyType[];
-    if (paginator.value)
-        paginator.value.type = res.data.value?.result.paginator!;
+    paginatorValue.value = res.data.value?.result.paginator!;
 }
 // call onMounted here so that the subcomponent paginator will load first
 // before doing the setup in here
-onMounted(setup);
+onMounted(() => {
+    watch(() => route.query, setup);
+    setup();
+});
 
 const deleting = ref("");
 async function del(id: string) {
@@ -54,12 +59,11 @@ async function del(id: string) {
                 <td colspan="4">
                     <FilterPart
                         ref="filter"
-                        :fields="[
+                        :filters="[
                             ['abbreviation_Icontains', $t('abbreviation')],
                             ['name_Icontains', $t('name')],
                             ['symbol_Icontains', $t('symbol')]
                         ]"
-                        @input="setup"
                     ></FilterPart>
                 </td>
             </tr>
@@ -99,7 +103,7 @@ async function del(id: string) {
                 <td colspan="4">
                     <PaginatorPart
                         ref="paginator"
-                        @input="setup"
+                        :value="paginatorValue"
                     ></PaginatorPart>
                 </td>
             </tr>
