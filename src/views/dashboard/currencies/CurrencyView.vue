@@ -17,6 +17,7 @@ const currencyStore = useCurrencyStore();
 
 const id = computed(() => +route.params.id);
 
+const takenAbbreviations = ref<string[]>([]);
 const givenCurrencies = ref<CreateCurrencyMutationInput[]>([]);
 
 const data = ref({
@@ -71,6 +72,18 @@ async function setup() {
         }
     } else {
         givenCurrencies.value = await currencyStore.listGiven();
+        const { data } = await currencyStore.list({
+            filter: {
+                abbreviation_In: givenCurrencies.value.map(
+                    (e) => e.abbreviation
+                )
+            }
+        });
+        if (data.value?.result.data) {
+            takenAbbreviations.value = data.value.result.data.map(
+                (e) => e?.abbreviation!
+            );
+        }
     }
 }
 setup();
@@ -149,6 +162,9 @@ function selectCurrency() {
                         v-for="currency of givenCurrencies"
                         :key="currency.abbreviation"
                         :value="currency.abbreviation"
+                        :disabled="
+                            takenAbbreviations.includes(currency.abbreviation)
+                        "
                     >
                         {{
                             `${currency.abbreviation.toUpperCase()}${
