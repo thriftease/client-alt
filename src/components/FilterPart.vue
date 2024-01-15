@@ -1,80 +1,86 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
 
 const props = defineProps({
-    fields: {
+    filters: {
         type: Array<[string, string]>,
         default: [],
         required: false
     }
 });
 
-const filterInput = computed(() => {
-    return {
-        search: (route.query.search || "") as string,
-        fields: (route.query.fields instanceof Array
-            ? route.query.fields
-            : route.query.fields
-              ? [route.query.fields]
-              : []) as string[]
+const keys = computed(() => props.filters.map(([k]) => k));
+
+const query = computed(() => {
+    const rv = {
+        search: "",
+        filters: [] as string[]
     };
+    if (route.query.search && typeof route.query.search === "string") {
+        rv.search = route.query.search;
+    }
+    if (route.query.filters && route.query.filters instanceof Array) {
+        rv.filters = route.query.filters.filter(
+            (v) => v && keys.value.includes(v)
+        ) as string[];
+    }
+    return rv;
 });
 
-defineExpose({
-    input: computed(() => {
-        const rv: Record<string, string> = {};
-        for (const field of filterInput.value.fields) {
-            rv[field] = filterInput.value.search;
+const record = computed(() => {
+    const rv: Record<string, any> = {};
+    if (query.value.search) {
+        for (const f of query.value.filters) {
+            rv[f] = query.value.search;
         }
-        return rv;
-    })
+    }
+    return rv;
 });
+
+defineExpose({ query, record });
 
 const emits = defineEmits<{
-    (e: "input", input: typeof filterInput.value): void;
+    (event: "query", value: [typeof query.value, typeof record.value]): void;
 }>();
 
-watch(filterInput, () => {
-    emits("input", filterInput.value);
-});
-onMounted(() => emits("input", filterInput.value));
+watch(query, () => emits("query", [query.value, record.value]));
 
-const searchValue = ref(filterInput.value.search);
-// const filters = ref<string[]>([
-//     ...(filterInput.value.fields.length
-//         ? filterInput.value.fields
-//         : props.fields.map((e) => e[0]))
-// ]);
-const filter = ref(
-    filterInput.value.fields.length
-        ? filterInput.value.fields[0]
-        : props.fields.length
-          ? props.fields[0][0]
-          : ""
+const searchValue = ref(query.value.search);
+const selectedFilters = ref(
+    query.value.filters.length ? query.value.filters : keys.value
 );
 
 function search() {
-    router.push({
+    router.push(getRoute(searchValue.value.trim(), selectedFilters.value));
+}
+
+function getRoute(search: string, filters: string[], props = {}) {
+    return {
         ...route,
         query: {
             ...route.query,
-            search: searchValue.value,
-            fields: [filter.value]
+            search,
+            filters
         },
-        force: true
-    });
+        ...props
+    };
 }
 </script>
 
 <template>
     <div>
         <input type="text" v-model="searchValue" @keyup.enter="search" />
-        <select v-if="fields.length" v-model="filter">
-            <option v-for="[key, val] of fields" :key="key" :value="key">
+        <select
+            v-if="filters.length"
+            v-model="selectedFilters"
+            size="3"
+            multiple
+        >
+            <option v-for="[key, val] of filters" :key="key" :value="key">
                 {{ val }}
             </option>
         </select>
