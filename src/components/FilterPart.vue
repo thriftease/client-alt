@@ -16,7 +16,9 @@ const props = defineProps({
 const filterInput = computed(() => {
     return {
         search: (route.query.search || "") as string,
-        fields: (route.query.fields || []) as string[]
+        fields: (route.query.fields instanceof Array
+            ? route.query.fields
+            : [route.query.fields]) as string[]
     };
 });
 
