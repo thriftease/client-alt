@@ -46,5 +46,6 @@
     "symbol": "Symbol",
     "preFillCurrency": "Pre-fill using an existing currency",
     "search": "Search",
-    "filters": "Filters"
+    "filters": "Filters",
+    "itemsPerPage": "Items per page"
 }
