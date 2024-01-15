@@ -23,8 +23,9 @@ watch(paginatorInput, () => $emits("input"));
         <router-link
             v-if="paginator.page.previous"
             :to="{
-                name: route.name!,
+                ...$route,
                 query: {
+                    ...$route.query,
                     page: paginator.page.previous,
                     perPage: paginator.perPage
                 }
@@ -38,8 +39,9 @@ watch(paginatorInput, () => $emits("input"));
         <router-link
             v-if="paginator.page.next"
             :to="{
-                name: route.name!,
+                ...$route,
                 query: {
+                    ...$route.query,
                     page: paginator.page.next,
                     perPage: paginator.perPage
                 }
