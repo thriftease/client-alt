@@ -44,5 +44,7 @@
     "abbreviation": "Abbreviation",
     "name": "Name",
     "symbol": "Symbol",
-    "preFillCurrency": "Pre-fill using an existing currency"
+    "preFillCurrency": "Pre-fill using an existing currency",
+    "search": "Search",
+    "filters": "Filters"
 }
