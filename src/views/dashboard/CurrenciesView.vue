@@ -16,7 +16,6 @@ const filter = ref<InstanceType<typeof FilterPart>>();
 const currencies = ref<CurrencyType[]>([]);
 const paginatorValue = ref<PaginatorType>();
 async function setup() {
-    console.log("setup", filter.value?.record);
     const res = await currencyStore.list({
         paginator: paginator.value?.query,
         filter: filter.value?.record,

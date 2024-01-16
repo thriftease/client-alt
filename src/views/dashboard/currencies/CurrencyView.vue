@@ -77,6 +77,12 @@ async function setup() {
                 abbreviation_In: givenCurrencies.value.map(
                     (e) => e.abbreviation
                 )
+            },
+            paginator: {
+                perPage: givenCurrencies.value.length
+            },
+            options: {
+                fetchPolicy: "network-only"
             }
         });
         if (data.value?.result.data) {
