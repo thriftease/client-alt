@@ -14,7 +14,13 @@ import {
     type DocumentNode,
     type OperationVariables
 } from "@apollo/client/core";
-import { ref } from "vue";
+import {
+    computed,
+    ref,
+    type ComputedRef,
+    type Ref,
+    type WritableComputedRef
+} from "vue";
 import type { LocationQuery } from "vue-router";
 
 function flattenErrors(errors: ErrorObject[]) {
@@ -92,6 +98,60 @@ function getQueryOrder<T extends string>(query: LocationQuery) {
     return [] as T[];
 }
 
+function useSelector<T1, T2>(
+    reference: Ref<T2[]> | ComputedRef<T2[]> | WritableComputedRef<T2[]>,
+    value: (e: T2) => T1
+) {
+    const _items = ref<T1[]>([]) as Ref<T1[]>;
+    const selectedAll = computed({
+        get: (): boolean =>
+            !!reference.value.length && reference.value.every((e) => has(e)),
+        set: (val) => {
+            _items.value.splice(0, _items.value.length);
+            if (val) {
+                reference.value.forEach((e) => select(e));
+            }
+        }
+    });
+    const itemValues = computed(() => _items.value);
+    const items = computed(() => {
+        const rv: T2[] = [];
+        for (const item of _items.value) {
+            const found = reference.value.find((e) => value(e) === item);
+            if (found) rv.push(found);
+        }
+        return rv;
+    });
+
+    function has(item: T2) {
+        return _items.value.includes(value(item));
+    }
+
+    function select(item: T2) {
+        if (has(item)) return;
+        _items.value.push(value(item));
+    }
+
+    function deselect(item: T2) {
+        if (has(item))
+            _items.value.splice(_items.value.indexOf(value(item)), 1);
+    }
+
+    function toggle(item: T2) {
+        if (has(item)) deselect(item);
+        else select(item);
+    }
+
+    return {
+        items,
+        itemValues,
+        selectedAll,
+        has,
+        select,
+        toggle
+    };
+}
+
 export {
     apolloClient,
     apolloMutate,
@@ -100,5 +160,6 @@ export {
     getQueryOrder,
     handleError,
     i18nClient,
+    useSelector,
     validators
 };
