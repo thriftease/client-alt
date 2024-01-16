@@ -1,4 +1,5 @@
 import {
+    accountFragment,
     currencyFragment,
     errorFragment,
     pageFragment,
@@ -27,7 +28,8 @@ const cache = new InMemoryCache({
         userFragment,
         pageFragment,
         paginatorFragment,
-        currencyFragment
+        currencyFragment,
+        accountFragment
     )
 });
 

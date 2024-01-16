@@ -47,7 +47,20 @@ const currencyFragment = gql`
     }
 `;
 
+const accountFragment = gql`
+    fragment accountFragment on AccountType {
+        id
+        currency {
+            ...currencyFragment
+        }
+        name
+        balance
+        futureBalance
+    }
+`;
+
 export {
+    accountFragment,
     currencyFragment,
     errorFragment,
     pageFragment,
