@@ -191,6 +191,8 @@ function selectCurrency() {
                 name="abbreviation"
                 type="text"
                 :maxlength="createRules.abbreviation.maxLength.$params.max"
+                :readonly="id > 0"
+                :disabled="id > 0"
                 v-model="$v.abbreviation.$model"
             />
             <FieldErrorsPart
