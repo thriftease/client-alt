@@ -7,8 +7,9 @@ import {
     type CurrencyType,
     type PaginatorType
 } from "@/gql";
+import router from "@/router";
 import { useCurrencyStore } from "@/stores";
-import { getQueryOrder, handleError, i18nClient } from "@/utils";
+import { getQueryOrder, handleError, i18nClient, useSelector } from "@/utils";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -21,6 +22,13 @@ const order = ref(getQueryOrder<CurrencyOrderQueryInput>(route.query));
 
 const currencies = ref<CurrencyType[]>([]);
 const paginatorValue = ref<PaginatorType>();
+
+const {
+    items: selectorItems,
+    selectedAll: selectorSelectedAll,
+    ...selector
+} = useSelector(currencies, (e) => e.abbreviation);
+
 async function setup() {
     const res = await currencyStore.list({
         paginator: paginator.value?.query,
@@ -32,6 +40,7 @@ async function setup() {
         currencies.value = res.payload.value.result.data as CurrencyType[];
         paginatorValue.value = res.payload.value.result.paginator!;
     }
+    selectorSelectedAll.value = false;
 }
 // call onMounted here so that the subcomponent paginator will load first
 // before doing the setup in here
@@ -56,6 +65,27 @@ async function del(id: string) {
     }
     deleting.value = "";
 }
+
+const deletingSelected = ref(false);
+async function deleteSelected() {
+    deletingSelected.value = true;
+    if (
+        !confirm(
+            i18nClient.global
+                .t("aboutToDeleteSelected")
+                .replace("$selected", selectorItems.value.length.toString())
+        )
+    ) {
+        deletingSelected.value = false;
+        return;
+    }
+    const promise = Promise.all(
+        selectorItems.value.map((e) => currencyStore.delete({ id: e.id }))
+    );
+    await promise;
+    router.go(0);
+    deletingSelected.value = false;
+}
 </script>
 
 <template>
@@ -64,7 +94,7 @@ async function del(id: string) {
     <table>
         <thead>
             <tr>
-                <td colspan="4">
+                <td colspan="5">
                     <FilterPart
                         ref="filter"
                         :filters="[
@@ -76,6 +106,9 @@ async function del(id: string) {
                 </td>
             </tr>
             <tr>
+                <th>
+                    <input type="checkbox" v-model="selectorSelectedAll" />
+                </th>
                 <th>
                     <OrderFieldPart
                         :order="order"
@@ -108,6 +141,13 @@ async function del(id: string) {
         </thead>
         <tbody>
             <tr v-for="currency of currencies" :key="currency.id">
+                <td>
+                    <input
+                        type="checkbox"
+                        @click="selector.toggle(currency)"
+                        :checked="selector.has(currency)"
+                    />
+                </td>
                 <td>{{ currency.abbreviation.toUpperCase() }}</td>
                 <td>{{ currency.name }}</td>
                 <td>{{ currency.symbol }}</td>
@@ -132,7 +172,7 @@ async function del(id: string) {
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="4">
+                <td colspan="5">
                     <PaginatorPart
                         ref="paginator"
                         :value="paginatorValue"
@@ -140,6 +180,14 @@ async function del(id: string) {
                 </td>
             </tr>
             <tr>
+                <td>
+                    <button
+                        @click.prevent="deleteSelected"
+                        :disabled="!selectorItems.length || deletingSelected"
+                    >
+                        {{ $t("delete") }}
+                    </button>
+                </td>
                 <td colspan="4">
                     <router-link
                         :to="{

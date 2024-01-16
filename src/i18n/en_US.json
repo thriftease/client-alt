@@ -47,5 +47,6 @@
     "preFillCurrency": "Pre-fill using an existing currency",
     "search": "Search",
     "filters": "Filters",
-    "itemsPerPage": "Items per page"
+    "itemsPerPage": "Items per page",
+    "aboutToDeleteSelected": "You're about to delete $selected item(s)"
 }
