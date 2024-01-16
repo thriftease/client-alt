@@ -55,6 +55,12 @@ const rules = id.value > 0 ? updateRules : createRules;
 
 const $v = useVuelidate(rules, data);
 
+const currencyTitle = i18nClient.global.t("currency").toLowerCase();
+const addCurrencyTitle = i18nClient.global.t("add") + " " + currencyTitle;
+const viewCurrencyTitle = ref(i18nClient.global.t("currency"));
+const title = computed(() =>
+    id.value === 0 ? addCurrencyTitle : viewCurrencyTitle.value
+);
 async function setup() {
     if (id.value !== 0) {
         const res = await currencyStore.get({ id: route.params.id as string });
@@ -64,6 +70,9 @@ async function setup() {
                 payload.result.data!.abbreviation.toUpperCase();
             $v.value.name.$model = payload.result.data!.name;
             $v.value.symbol.$model = payload.result.data!.symbol;
+
+            viewCurrencyTitle.value =
+                data.value.name + " " + viewCurrencyTitle.value.toLowerCase();
         } else {
             router.replace({
                 name: "dashboard-currencies-currency",
@@ -91,6 +100,7 @@ async function setup() {
             );
         }
     }
+    document.title = `${document.title} - ${title.value}`;
 }
 setup();
 
@@ -154,7 +164,7 @@ function selectCurrency() {
 </script>
 
 <template>
-    <h2>{{ $t("currency") }}</h2>
+    <h2>{{ title }}</h2>
     <br />
 
     <form @submit.prevent="submit" novalidate>

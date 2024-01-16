@@ -77,7 +77,7 @@ const router = createRouter({
                 {
                     path: "currencies/:id(new|0|[1-9]\\d*)",
                     name: "dashboard-currencies-currency",
-                    meta: { title: getTitle($t("currency")) },
+                    meta: { title: getTitle() },
                     component: () =>
                         import("@/views/dashboard/currencies/CurrencyView.vue")
                 }
