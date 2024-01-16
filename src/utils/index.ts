@@ -15,6 +15,7 @@ import {
     type OperationVariables
 } from "@apollo/client/core";
 import { ref } from "vue";
+import type { LocationQuery } from "vue-router";
 
 function flattenErrors(errors: ErrorObject[]) {
     return errors.map((e) => e.$message as string);
@@ -83,11 +84,20 @@ async function apolloMutate<
     return { ...rest, payload };
 }
 
+function getQueryOrder<T extends string>(query: LocationQuery) {
+    if (query.order) {
+        if (typeof query.order === "string") return [query.order as T];
+        return query.order as T[];
+    }
+    return [] as T[];
+}
+
 export {
     apolloClient,
     apolloMutate,
     apolloQuery,
     flattenErrors,
+    getQueryOrder,
     handleError,
     i18nClient,
     validators

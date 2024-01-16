@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import FilterPart from "@/components/FilterPart.vue";
+import OrderFieldPart from "@/components/OrderFieldPart.vue";
 import PaginatorPart from "@/components/PaginatorPart.vue";
-import { type CurrencyType, type PaginatorType } from "@/gql";
+import {
+    CurrencyOrderQueryInput,
+    type CurrencyType,
+    type PaginatorType
+} from "@/gql";
 import { useCurrencyStore } from "@/stores";
-import { handleError, i18nClient } from "@/utils";
+import { getQueryOrder, handleError, i18nClient } from "@/utils";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -12,6 +17,7 @@ const currencyStore = useCurrencyStore();
 
 const paginator = ref<InstanceType<typeof PaginatorPart>>();
 const filter = ref<InstanceType<typeof FilterPart>>();
+const order = ref(getQueryOrder<CurrencyOrderQueryInput>(route.query));
 
 const currencies = ref<CurrencyType[]>([]);
 const paginatorValue = ref<PaginatorType>();
@@ -19,6 +25,7 @@ async function setup() {
     const res = await currencyStore.list({
         paginator: paginator.value?.query,
         filter: filter.value?.record,
+        order: order.value,
         options: { fetchPolicy: "network-only" }
     });
     if (res.payload.value) {
@@ -69,9 +76,33 @@ async function del(id: string) {
                 </td>
             </tr>
             <tr>
-                <th>{{ $t("abbreviation") }}</th>
-                <th>{{ $t("name") }}</th>
-                <th>{{ $t("symbol") }}</th>
+                <th>
+                    <OrderFieldPart
+                        :order="order"
+                        :name="$t('abbreviation')"
+                        :asc="CurrencyOrderQueryInput.AbbreviationAsc"
+                        :desc="CurrencyOrderQueryInput.AbbreviationDesc"
+                        @order="$event(order, true)"
+                    ></OrderFieldPart>
+                </th>
+                <th>
+                    <OrderFieldPart
+                        :order="order"
+                        :name="$t('name')"
+                        :asc="CurrencyOrderQueryInput.NameAsc"
+                        :desc="CurrencyOrderQueryInput.NameDesc"
+                        @order="$event(order, true)"
+                    ></OrderFieldPart>
+                </th>
+                <th>
+                    <OrderFieldPart
+                        :order="order"
+                        :name="$t('symbol')"
+                        :asc="CurrencyOrderQueryInput.SymbolAsc"
+                        :desc="CurrencyOrderQueryInput.SymbolDesc"
+                        @order="$event(order, true)"
+                    ></OrderFieldPart>
+                </th>
                 <th>{{ $t("actions") }}</th>
             </tr>
         </thead>
