@@ -58,7 +58,7 @@ const useCurrencyStore = defineStore("currencyStore", () => {
     }
 
     async function create(currency: CreateCurrencyMutationInput) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { currency: CreateCurrencyMutationInput },
             { result: CreateCurrencyMutationPayload }
         >(
@@ -78,7 +78,7 @@ const useCurrencyStore = defineStore("currencyStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     async function list(
@@ -89,7 +89,7 @@ const useCurrencyStore = defineStore("currencyStore", () => {
             options?: {};
         } = {}
     ) {
-        const { data, error, loading } = await apolloQuery<
+        const re = await apolloQuery<
             typeof params,
             { result: ListCurrenciesQueryPayload }
         >(
@@ -116,11 +116,11 @@ const useCurrencyStore = defineStore("currencyStore", () => {
             `,
             params.options
         );
-        return { data, error, loading };
+        return re;
     }
 
     async function get(input: GetCurrencyQueryInput) {
-        const { data, error, loading } = await apolloQuery<
+        const re = await apolloQuery<
             { input: GetCurrencyQueryInput },
             { result: GetCurrencyQueryPayload }
         >(
@@ -135,11 +135,11 @@ const useCurrencyStore = defineStore("currencyStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     async function update(currency: UpdateCurrencyMutationInput) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { currency: UpdateCurrencyMutationInput },
             { result: UpdateCurrencyMutationPayload }
         >(
@@ -159,11 +159,11 @@ const useCurrencyStore = defineStore("currencyStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     async function del(input: DeleteCurrencyMutationInput) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { input: DeleteCurrencyMutationInput },
             { result: DeleteCurrencyMutationPayload }
         >(
@@ -181,7 +181,7 @@ const useCurrencyStore = defineStore("currencyStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     return {

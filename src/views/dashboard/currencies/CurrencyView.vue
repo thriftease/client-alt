@@ -32,7 +32,7 @@ async function abbreviationExisting(value: string) {
         paginator: { perPage: 1 },
         options: { fetchPolicy: "network-only" }
     });
-    return res.data.value?.result.data.length == 1;
+    return res.payload.value?.result.data.length == 1;
 }
 
 const createRules = {
@@ -58,7 +58,7 @@ const $v = useVuelidate(rules, data);
 async function setup() {
     if (id.value !== 0) {
         const res = await currencyStore.get({ id: route.params.id as string });
-        const payload = res.data.value;
+        const payload = res.payload.value;
         if (payload) {
             $v.value.abbreviation.$model =
                 payload.result.data!.abbreviation.toUpperCase();
@@ -72,7 +72,7 @@ async function setup() {
         }
     } else {
         givenCurrencies.value = await currencyStore.listGiven();
-        const { data } = await currencyStore.list({
+        const { payload } = await currencyStore.list({
             filter: {
                 abbreviation_In: givenCurrencies.value.map(
                     (e) => e.abbreviation
@@ -85,8 +85,8 @@ async function setup() {
                 fetchPolicy: "network-only"
             }
         });
-        if (data.value?.result.data) {
-            takenAbbreviations.value = data.value.result.data.map(
+        if (payload.value?.result.data) {
+            takenAbbreviations.value = payload.value.result.data.map(
                 (e) => e?.abbreviation!
             );
         }
@@ -109,7 +109,7 @@ async function submit() {
             });
         }
         const payload = handleError({
-            data: res.data.value,
+            data: res.payload.value?.result,
             error: res.error.value
         });
         if (payload) {
@@ -128,7 +128,7 @@ async function del() {
         });
 
         const payload = handleError({
-            data: res.data.value,
+            data: res.payload.value?.result,
             error: res.error.value
         });
         if (payload) {

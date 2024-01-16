@@ -37,7 +37,7 @@ async function submit() {
             rememberMe: data.value.rememberMe
         });
         const payload = handleError({
-            data: res.data.value,
+            data: res.payload.value?.result,
             error: res.error.value
         });
         if (payload) {

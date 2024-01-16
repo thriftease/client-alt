@@ -49,7 +49,7 @@ const useAuthStore = defineStore("authStore", () => {
     async function signIn(
         vars: SignInAltVariables & { rememberMe?: boolean }
     ) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             SignInAltVariables,
             { result: AuthSignInMutationPayload }
         >(
@@ -65,18 +65,19 @@ const useAuthStore = defineStore("authStore", () => {
                 }
             `
         );
-        if (data.value) {
-            setToken(data.value.result.token, vars.rememberMe);
-            _signedIn.value = data.value.result.user;
+        const result = re.payload.value?.result;
+        if (result?.token) {
+            setToken(result.token, vars.rememberMe);
+            _signedIn.value = result.user;
         }
-        return { data, error, loading };
+        return re;
     }
 
     async function verify(token?: string | null) {
         if (!token) token = getToken();
         if (!token) return;
 
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { token: string },
             { result: AuthVerifyMutationPayload }
         >(
@@ -91,14 +92,15 @@ const useAuthStore = defineStore("authStore", () => {
                 }
             `
         );
-        if (data.value) {
-            _signedIn.value = data.value.result.user;
+        const result = re.payload.value?.result;
+        if (result) {
+            _signedIn.value = result.user;
         }
-        return { data, error, loading };
+        return re;
     }
 
     async function signUp(user: CreateUserMutationInput) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { user: CreateUserMutationInput },
             { result: CreateUserMutationPayload }
         >(
@@ -116,7 +118,7 @@ const useAuthStore = defineStore("authStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     function signOut() {
@@ -130,7 +132,7 @@ const useAuthStore = defineStore("authStore", () => {
         "?token={token}";
 
     async function sendReset(email: string) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { email: string; url: string },
             { result: AuthSendResetMutationPayload }
         >(
@@ -143,11 +145,11 @@ const useAuthStore = defineStore("authStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     async function verifyReset(token: string) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { token: string },
             { result: AuthVerifyResetMutationPayload }
         >(
@@ -162,11 +164,11 @@ const useAuthStore = defineStore("authStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     async function applyReset(reset: AuthApplyResetMutationInput) {
-        const { data, error, loading } = await apolloMutate<
+        const re = await apolloMutate<
             { reset: AuthApplyResetMutationInput },
             { result: AuthApplyResetMutationPayload }
         >(
@@ -186,7 +188,7 @@ const useAuthStore = defineStore("authStore", () => {
                 }
             `
         );
-        return { data, error, loading };
+        return re;
     }
 
     return {

@@ -21,14 +21,16 @@ async function setup() {
         filter: filter.value?.record,
         options: { fetchPolicy: "network-only" }
     });
-    currencies.value = res.data.value?.result.data as CurrencyType[];
-    paginatorValue.value = res.data.value?.result.paginator!;
+    if (res.payload.value) {
+        currencies.value = res.payload.value.result.data as CurrencyType[];
+        paginatorValue.value = res.payload.value.result.paginator!;
+    }
 }
 // call onMounted here so that the subcomponent paginator will load first
 // before doing the setup in here
-onMounted(() => {
+onMounted(async () => {
     watch(() => route.query, setup);
-    setup();
+    await setup();
 });
 
 const deleting = ref("");
@@ -38,7 +40,7 @@ async function del(id: string) {
         const res = await currencyStore.delete({ id });
 
         const payload = handleError({
-            data: res.data.value,
+            data: res.payload.value?.result,
             error: res.error.value
         });
         if (payload) {

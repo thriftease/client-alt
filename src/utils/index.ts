@@ -2,6 +2,11 @@ import type { ErrorType } from "@/gql";
 import apolloClient from "@/utils/apolloClient";
 import i18nClient from "@/utils/i18nClient";
 import validators from "@/utils/validators";
+import {
+    provideApolloClient,
+    useLazyQuery,
+    useMutation
+} from "@vue/apollo-composable";
 import type { ErrorObject } from "@vuelidate/core";
 
 import {
@@ -42,63 +47,46 @@ function handleError<T>(
     }
 }
 
-async function apolloRun<
-    TInput extends OperationVariables,
-    TPayload extends { [key: string]: any }
->(
-    type: "mutation" | "query",
-    input: TInput,
-    document: DocumentNode,
-    options?: { [key: string]: any }
-) {
-    const rv = {
-        data: ref<TPayload>(),
-        error: ref<ApolloError>(),
-        loading: ref(false)
-    };
-    rv.loading.value = true;
-    try {
-        if (type === "mutation") {
-            const result = await apolloClient.mutate<TPayload>({
-                ...(options ?? {}),
-                mutation: document,
-                variables: input
-            });
-            rv.data.value = result.data!;
-        } else {
-            const result = await apolloClient.query<TPayload>({
-                ...(options ?? {}),
-                query: document,
-                variables: input
-            });
-            rv.data.value = result.data!;
-        }
-    } catch (err: any) {
-        rv.error.value = err as ApolloError;
-    }
-    rv.loading.value = false;
-    return rv;
-}
-
 async function apolloQuery<
     TInput extends OperationVariables,
     TPayload extends { [key: string]: any }
 >(input: TInput, document: DocumentNode, options?: { [key: string]: any }) {
-    return apolloRun<TInput, TPayload>("query", input, document, options);
+    const apolloProvider = provideApolloClient(apolloClient);
+    const { result: payload, ...rest } = apolloProvider(() =>
+        useLazyQuery<TPayload>(document, input, options)
+    );
+    try {
+        await rest.load();
+    } catch {
+        /* empty */
+    }
+    return { ...rest, payload };
 }
 
 async function apolloMutate<
     TInput extends OperationVariables,
     TPayload extends { [key: string]: any }
 >(input: TInput, document: DocumentNode, options?: { [key: string]: any }) {
-    return apolloRun<TInput, TPayload>("mutation", input, document, options);
+    const apolloProvider = provideApolloClient(apolloClient);
+    const { mutate, ...rest } = apolloProvider(() =>
+        useMutation<TPayload>(document, {
+            ...(options ?? {}),
+            variables: input
+        })
+    );
+    const payload = ref<TPayload>();
+    try {
+        payload.value = (await mutate())?.data ?? undefined;
+    } catch {
+        /* empty */
+    }
+    return { ...rest, payload };
 }
 
 export {
     apolloClient,
     apolloMutate,
     apolloQuery,
-    apolloRun,
     flattenErrors,
     handleError,
     i18nClient,

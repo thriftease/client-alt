@@ -54,11 +54,11 @@ async function setup() {
     if (data.value.token) {
         const res = await authStore.verifyReset(data.value.token);
         const payload = handleError({
-            data: res.data.value,
+            data: res.payload.value?.result,
             error: res.error.value
         });
         if (payload) {
-            $v.value.email.$model = payload.result.user!.email;
+            $v.value.email.$model = payload.user!.email;
         } else {
             $v.value.token.$model = undefined;
             await router.replace({ name: "auth-reset" });
@@ -74,11 +74,11 @@ async function submit() {
         if (!data.value.token) {
             const res = await authStore.sendReset(data.value.email);
             const payload = handleError({
-                data: res.data.value,
+                data: res.payload.value?.result,
                 error: res.error.value
             });
             if (payload) {
-                if (payload.result.sent) {
+                if (payload.sent) {
                     alert(`Sent password reset link!`);
                 } else {
                     alert(
@@ -92,7 +92,7 @@ async function submit() {
                 password: data.value.password
             });
             const payload = handleError({
-                data: res.data.value,
+                data: res.payload.value?.result,
                 error: res.error.value
             });
             if (payload) {
