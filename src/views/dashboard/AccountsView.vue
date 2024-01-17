@@ -89,7 +89,7 @@ async function deleteSelected() {
 </script>
 
 <template>
-    <h2>{{ $t("currencies") }}</h2>
+    <h2>{{ $t("accounts") }}</h2>
     <br />
     <table>
         <thead>
@@ -128,11 +128,14 @@ async function deleteSelected() {
                     />
                 </td>
                 <td>{{ account.name }}</td>
-                <td>{{ `${account.currency.symbol} ${account.balance}` }}</td>
+                <td>
+                    <sup>{{ account.currency.symbol }}</sup
+                    >{{ account.balance }}
+                </td>
                 <td>
                     <router-link
                         :to="{
-                            name: 'dashboard-currencies-account',
+                            name: 'dashboard-accounts-account',
                             params: { id: account.id }
                         }"
                     >
@@ -169,7 +172,7 @@ async function deleteSelected() {
                 <td colspan="3">
                     <router-link
                         :to="{
-                            name: 'dashboard-currencies-currency',
+                            name: 'dashboard-accounts-account',
                             params: { id: 0 }
                         }"
                     >

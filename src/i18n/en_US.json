@@ -12,7 +12,8 @@
         "hasSpecialCharacter": "Value must at least have a special character",
         "password": "Value must be a mix of lowercase, uppercase, digit(s), and special character(s)",
         "passwordConfirmation": "Value must be the same as the password",
-        "abbreviationNotExisting": "Abbreviation is already existing"
+        "abbreviationNotExisting": "Abbreviation is already existing",
+        "accountNotExisting": "Account name with this currency is already existing"
     },
     "signIn": "Sign in",
     "email": "Email",
@@ -51,5 +52,8 @@
     "aboutToDeleteSelected": "You're about to delete $selected item(s)",
     "accounts": "Accounts",
     "account": "Account",
-    "balance": "Balance"
+    "balance": "Balance",
+    "createdCurrencies": "Created currencies",
+    "givenCurrencies": "Given Currencies",
+    "noCurrencies": "No currencies to list"
 }

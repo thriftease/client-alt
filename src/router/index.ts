@@ -10,6 +10,8 @@ function getTitle(title?: string) {
 
 const $t = i18nClient.global.t;
 
+const idRegex = "(new|0|[1-9]\\d*)";
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -75,7 +77,7 @@ const router = createRouter({
                         import("@/views/dashboard/CurrenciesView.vue")
                 },
                 {
-                    path: "currencies/:id(new|0|[1-9]\\d*)",
+                    path: `currencies/:id${idRegex}`,
                     name: "dashboard-currencies-currency",
                     meta: { title: getTitle() },
                     component: () =>
@@ -87,6 +89,13 @@ const router = createRouter({
                     meta: { title: getTitle($t("accounts")) },
                     component: () =>
                         import("@/views/dashboard/AccountsView.vue")
+                },
+                {
+                    path: `accounts/:id${idRegex}`,
+                    name: "dashboard-accounts-account",
+                    meta: { title: getTitle() },
+                    component: () =>
+                        import("@/views/dashboard/accounts/AccountView.vue")
                 }
             ]
         }

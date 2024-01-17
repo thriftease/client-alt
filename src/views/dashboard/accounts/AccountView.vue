@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
-import { accountRules } from "@/rules";
+import {
+    CurrencyOrderQueryInput,
+    type CreateCurrencyMutationInput,
+    type CurrencyType
+} from "@/gql";
+import { accountRules as originalAccountRules } from "@/rules";
 import { useAccountStore, useCurrencyStore } from "@/stores";
 import { handleError, i18nClient } from "@/utils";
 import useVuelidate from "@vuelidate/core";
+import { helpers, not } from "@vuelidate/validators";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+
+const { withAsync, withMessage } = helpers;
 
 const router = useRouter();
 const route = useRoute();
@@ -14,10 +22,35 @@ const accountStore = useAccountStore();
 
 const id = computed(() => +route.params.id);
 
+const takenAbbreviations = ref<string[]>([]);
+const givenCurrencies = ref<CreateCurrencyMutationInput[]>([]);
+
+const currencies = ref<CurrencyType[]>([]);
+
 const data = ref({
     currency: "",
     name: ""
 });
+
+const originalData = ref<typeof data.value | undefined>();
+
+async function accountExisting([currency, name]: [string, string]) {
+    if (originalData.value) {
+        if (
+            originalData.value.currency === currency &&
+            originalData.value.name === name
+        )
+            return false;
+    }
+    const res = await accountStore.existing(currency, name, {
+        fetchPolicy: "network-only"
+    });
+    return res.payload.value?.result === true;
+}
+
+const accountRules = {
+    ...originalAccountRules
+};
 
 const createRules = {
     ...accountRules
@@ -30,6 +63,19 @@ const updateRules = {
 const rules = id.value > 0 ? updateRules : createRules;
 
 const $v = useVuelidate(rules, data);
+const $v2 = useVuelidate(
+    {
+        account: {
+            notExisting: withMessage(
+                i18nClient.global.t("validations.accountNotExisting"),
+                withAsync(not(accountExisting))
+            )
+        }
+    },
+    computed((): { account: [string, string] } => {
+        return { account: [$v.value.currency.$model, $v.value.name.$model] };
+    })
+);
 
 const accountTitle = i18nClient.global.t("account").toLowerCase();
 const addAccountTitle = i18nClient.global.t("add") + " " + accountTitle;
@@ -39,12 +85,16 @@ const title = computed(() =>
 );
 async function setup() {
     const res = await currencyStore.list({
+        order: [CurrencyOrderQueryInput.AbbreviationAsc],
+        paginator: { perPage: 999 },
         options: { fetchPolicy: "network-only" }
     });
     if (res.payload.value) {
         currencies.value = res.payload.value.result.data as CurrencyType[];
-        paginatorValue.value = res.payload.value.result.paginator!;
     }
+
+    givenCurrencies.value = await currencyStore.listGiven();
+    takenAbbreviations.value = currencies.value.map((e) => e?.abbreviation!);
 
     if (id.value !== 0) {
         const res = await accountStore.get({ id: route.params.id as string });
@@ -52,35 +102,16 @@ async function setup() {
         if (payload) {
             $v.value.currency.$model = payload.result.data!.currency.id;
             $v.value.name.$model = payload.result.data!.name;
-            $v.value.symbol.$model = payload.result.data!.symbol;
+
+            originalData.value = { ...data.value };
 
             viewAccountTitle.value =
                 data.value.name + " " + viewAccountTitle.value.toLowerCase();
         } else {
             router.replace({
-                name: "dashboard-currencies-account",
+                name: "dashboard-accounts-account",
                 params: { id: 0 }
             });
-        }
-    } else {
-        givenCurrencies.value = await accountStore.listGiven();
-        const { payload } = await accountStore.list({
-            filter: {
-                abbreviation_In: givenCurrencies.value.map(
-                    (e) => e.abbreviation
-                )
-            },
-            paginator: {
-                perPage: givenCurrencies.value.length
-            },
-            options: {
-                fetchPolicy: "network-only"
-            }
-        });
-        if (payload.value?.result.data) {
-            takenAbbreviations.value = payload.value.result.data.map(
-                (e) => e?.abbreviation!
-            );
         }
     }
     document.title = `${document.title} - ${title.value}`;
@@ -90,15 +121,32 @@ setup();
 const submitting = ref(false);
 async function submit() {
     submitting.value = true;
-    if (await $v.value.$validate()) {
+    if ((await $v.value.$validate()) && (await $v2.value.$validate())) {
+        let currency = data.value.currency;
+        if (isNaN(+currency)) {
+            const gcurrency = givenCurrencies.value.find(
+                (e) => e.abbreviation === currency
+            );
+            if (!gcurrency) {
+                submitting.value = false;
+                return;
+            }
+            const res = await currencyStore.create({
+                abbreviation: gcurrency.abbreviation,
+                name: gcurrency.name,
+                symbol: gcurrency.symbol
+            });
+            currency = res.payload.value!.result.data!.id;
+        }
+
         let res;
         if (id.value === 0) {
-            res = await accountStore.create(data.value);
+            res = await accountStore.create({ ...data.value, currency });
         } else {
             res = await accountStore.update({
                 id: route.params.id as string,
-                name: data.value.name,
-                symbol: data.value.symbol
+                currency,
+                name: data.value.name
             });
         }
         const payload = handleError({
@@ -106,7 +154,7 @@ async function submit() {
             error: res.error.value
         });
         if (payload) {
-            router.push({ name: "dashboard-currencies" });
+            router.push({ name: "dashboard-accounts" });
         }
     }
     submitting.value = false;
@@ -130,20 +178,6 @@ async function del() {
     }
     deleting.value = false;
 }
-
-const selectedAccount = ref("");
-function selectAccount() {
-    if (!selectedAccount.value) return;
-    const input = givenCurrencies.value.find(
-        (v) => v.abbreviation === selectedAccount.value
-    );
-    if (input) {
-        $v.value.abbreviation.$model = input.abbreviation.toUpperCase();
-        $v.value.name.$model = input.name;
-        $v.value.symbol.$model = input.symbol.toUpperCase();
-    }
-    selectedAccount.value = "";
-}
 </script>
 
 <template>
@@ -151,45 +185,61 @@ function selectAccount() {
     <br />
 
     <form @submit.prevent="submit" novalidate>
-        <template v-if="id === 0">
-            <div>
-                <select v-model="selectedAccount" @change="selectAccount">
-                    <option value="" hidden>
-                        {{ $t("preFillAccount") }}
-                    </option>
+        <div>
+            <label for="currency">{{ $t("currency") }}</label>
+            <br />
+            <select
+                id="currency"
+                name="currency"
+                :disabled="!currencies.length && !givenCurrencies.length"
+                v-model="$v.currency.$model"
+            >
+                <option
+                    v-if="!currencies.length && !givenCurrencies.length"
+                    value=""
+                    hidden
+                    selected
+                >
+                    {{ $t("noCurrencies") }}
+                </option>
+                <optgroup
+                    v-if="currencies.length"
+                    :label="$t('createdCurrencies')"
+                >
                     <option
-                        v-for="account of givenCurrencies"
-                        :key="account.abbreviation"
-                        :value="account.abbreviation"
-                        :disabled="
-                            takenAbbreviations.includes(account.abbreviation)
-                        "
+                        v-for="currency of currencies"
+                        :key="currency.abbreviation"
+                        :value="currency.id"
                     >
                         {{
-                            `${account.abbreviation.toUpperCase()}${
-                                account.name ? ` - ${account.name}` : ""
+                            `${currency.abbreviation.toUpperCase()}${
+                                currency.name ? ` - ${currency.name}` : ""
                             }`
                         }}
                     </option>
-                </select>
-            </div>
-            <br />
-        </template>
-
-        <div>
-            <label for="abbreviation">{{ $t("abbreviation") }}</label>
-            <br />
-            <input
-                id="abbreviation"
-                name="abbreviation"
-                type="text"
-                :maxlength="createRules.abbreviation.maxLength.$params.max"
-                :readonly="id > 0"
-                :disabled="id > 0"
-                v-model="$v.abbreviation.$model"
-            />
+                </optgroup>
+                <optgroup
+                    v-if="givenCurrencies.length"
+                    :label="$t('givenCurrencies')"
+                >
+                    <option
+                        v-for="currency of givenCurrencies"
+                        :key="currency.abbreviation"
+                        :value="currency.abbreviation"
+                        :disabled="
+                            takenAbbreviations.includes(currency.abbreviation)
+                        "
+                    >
+                        {{
+                            `${currency.abbreviation.toUpperCase()}${
+                                currency.name ? ` - ${currency.name}` : ""
+                            }`
+                        }}
+                    </option>
+                </optgroup>
+            </select>
             <FieldErrorsPart
-                :errors="$v.abbreviation.$errors[0]"
+                :errors="$v.currency.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
@@ -204,22 +254,7 @@ function selectAccount() {
                 v-model="$v.name.$model"
             />
             <FieldErrorsPart
-                :errors="$v.name.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
-        <div>
-            <label for="symbol">{{ $t("symbol") }}</label>
-            <br />
-            <input
-                id="symbol"
-                name="symbol"
-                type="text"
-                :maxlength="rules.symbol.maxLength.$params.max"
-                v-model="$v.symbol.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.symbol.$errors[0]"
+                :errors="$v.name.$errors[0] || $v2.account.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
@@ -233,7 +268,12 @@ function selectAccount() {
             </template>
             <button
                 type="submit"
-                :disabled="submitting || $v.$invalid || !$v.$anyDirty"
+                :disabled="
+                    submitting ||
+                    $v.$invalid ||
+                    ($v2.account.$anyDirty && $v2.$invalid) ||
+                    !$v.$anyDirty
+                "
             >
                 {{ $t("submit") }}
             </button>
