@@ -16,10 +16,10 @@ const query = computed(() => {
         perPage: 10
     };
     if (route.query.page && !isNaN(+route.query.page)) {
-        rv.page = Math.max(+route.query.page, 1);
+        rv.page = Math.round(Math.max(+route.query.page, 1));
     }
     if (route.query.perPage && !isNaN(+route.query.perPage)) {
-        rv.perPage = Math.max(+route.query.perPage, 1);
+        rv.perPage = Math.round(Math.max(+route.query.perPage, 1));
     }
     return rv;
 });
@@ -38,7 +38,7 @@ const perPage = computed({
         return _perPage.value;
     },
     set(v) {
-        _perPage.value = Math.max(v, 1);
+        _perPage.value = Math.round(Math.max(v, 1));
     }
 });
 
@@ -56,7 +56,7 @@ function getRoute(page: number, perPage: number, props = {}) {
 
 function setPerPage() {
     if (!props.value) return;
-    router.push(getRoute(props.value.page.current, perPage.value));
+    router.push(getRoute(Math.round(props.value.page.current), perPage.value));
 }
 </script>
 
@@ -67,6 +67,7 @@ function setPerPage() {
             id="perPage"
             type="number"
             min="1"
+            step="1"
             @keyup.enter="setPerPage"
             v-model="perPage"
         />
