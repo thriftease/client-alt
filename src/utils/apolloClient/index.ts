@@ -4,6 +4,8 @@ import {
     errorFragment,
     pageFragment,
     paginatorFragment,
+    tagFragment,
+    transactionFragment,
     userFragment
 } from "@/gql";
 import authLink from "@/utils/apolloClient/authLink";
@@ -29,7 +31,9 @@ const cache = new InMemoryCache({
         pageFragment,
         paginatorFragment,
         currencyFragment,
-        accountFragment
+        accountFragment,
+        tagFragment,
+        transactionFragment
     )
 });
 

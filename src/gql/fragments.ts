@@ -59,11 +59,37 @@ const accountFragment = gql`
     }
 `;
 
+const tagFragment = gql`
+    fragment tagFragment on TagType {
+        id
+        name
+    }
+`;
+
+const transactionFragment = gql`
+    fragment transactionFragment on TransactionType {
+        id
+        account {
+            ...accountFragment
+        }
+        amount
+        datetime
+        name
+        description
+        tagSet {
+            ...tagFragment
+        }
+        resultingAccountBalance
+    }
+`;
+
 export {
     accountFragment,
     currencyFragment,
     errorFragment,
     pageFragment,
     paginatorFragment,
+    tagFragment,
+    transactionFragment,
     userFragment
 };
