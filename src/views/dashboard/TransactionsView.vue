@@ -1,43 +1,49 @@
 <script setup lang="ts">
 import FilterPart from "@/components/FilterPart.vue";
-import OrderFieldPart from "@/components/OrderFieldPart.vue";
 import PaginatorPart from "@/components/PaginatorPart.vue";
 import {
-    AccountOrderQueryInput,
-    type AccountType,
-    type PaginatorType
+    TransactionOrderQueryInput,
+    type PaginatorType,
+    type TransactionType
 } from "@/gql";
 import router from "@/router";
-import { useAccountStore } from "@/stores";
-import { getQueryOrder, handleError, i18nClient, useSelector } from "@/utils";
+import { useTransactionStore } from "@/stores";
+import {
+    getQueryOrder,
+    handleError,
+    i18nClient,
+    toPrettyDatetime,
+    useSelector
+} from "@/utils";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const accountStore = useAccountStore();
+const transactionStore = useTransactionStore();
 
 const paginator = ref<InstanceType<typeof PaginatorPart>>();
 const filter = ref<InstanceType<typeof FilterPart>>();
-const order = ref(getQueryOrder<AccountOrderQueryInput>(route.query));
+const order = ref(getQueryOrder<TransactionOrderQueryInput>(route.query));
 
-const accounts = ref<AccountType[]>([]);
+const transactions = ref<TransactionType[]>([]);
 const paginatorValue = ref<PaginatorType>();
 
 const {
     items: selectorItems,
     selectedAll: selectorSelectedAll,
     ...selector
-} = useSelector(accounts, (e) => e.id);
+} = useSelector(transactions, (e) => e.id);
 
 async function setup() {
-    const res = await accountStore.list({
+    const res = await transactionStore.list({
         paginator: paginator.value?.query,
         filter: filter.value?.record,
-        order: order.value,
+        order: [TransactionOrderQueryInput.DatetimeDesc],
         options: { fetchPolicy: "network-only" }
     });
     if (res.payload.value) {
-        accounts.value = res.payload.value.result.data as AccountType[];
+        transactions.value = res.payload.value.result
+            .data as TransactionType[];
         paginatorValue.value = res.payload.value.result.paginator!;
     }
     selectorSelectedAll.value = false;
@@ -53,7 +59,7 @@ const deleting = ref("");
 async function del(id: string) {
     deleting.value = id;
     if (confirm(i18nClient.global.t("aboutToDelete"))) {
-        const res = await accountStore.delete({ id });
+        const res = await transactionStore.delete({ id });
 
         const payload = handleError({
             data: res.payload.value?.result,
@@ -80,7 +86,7 @@ async function deleteSelected() {
         return;
     }
     const promise = Promise.all(
-        selectorItems.value.map((e) => accountStore.delete({ id: e.id }))
+        selectorItems.value.map((e) => transactionStore.delete({ id: e.id }))
     );
     await promise;
     router.go(0);
@@ -89,62 +95,80 @@ async function deleteSelected() {
 </script>
 
 <template>
-    <h2>{{ $t("accounts") }}</h2>
+    <h2>{{ $t("transactions") }}</h2>
     <br />
     <table>
         <thead>
-            <tr>
-                <td colspan="4">
+            <!-- <tr>
+                <td colspan="7">
                     <FilterPart
                         ref="filter"
                         :filters="[['name_Icontains', $t('name')]]"
                     ></FilterPart>
                 </td>
-            </tr>
+            </tr> -->
             <tr>
                 <th>
                     <input type="checkbox" v-model="selectorSelectedAll" />
                 </th>
-                <th>
-                    <OrderFieldPart
-                        :order="order"
-                        :name="$t('name')"
-                        :asc="AccountOrderQueryInput.NameAsc"
-                        :desc="AccountOrderQueryInput.NameDesc"
-                        @order="$event(order, true)"
-                    ></OrderFieldPart>
-                </th>
-                <th>{{ $t("balance") }}</th>
+                <th>{{ $t("account") }}</th>
+                <th>{{ $t("amount") }}</th>
+                <th>{{ $t("accountBalance") }}</th>
+                <th>{{ $t("datetime") }}</th>
+                <th>{{ $t("details") }}</th>
+                <th>{{ $t("tags") }}</th>
                 <th>{{ $t("actions") }}</th>
             </tr>
         </thead>
         <tbody>
-            <tr v-for="account of accounts" :key="account.id">
+            <tr v-for="transaction of transactions" :key="transaction.id">
                 <td>
                     <input
                         type="checkbox"
-                        @click="selector.toggle(account)"
-                        :checked="selector.has(account)"
+                        @click="selector.toggle(transaction)"
+                        :checked="selector.has(transaction)"
                     />
                 </td>
-                <td>{{ account.name }}</td>
+                <td>{{ transaction.account.name }}</td>
+                <td
+                    :style="{
+                        color: +transaction.amount < 0 ? 'red' : 'green'
+                    }"
+                >
+                    <sup>{{ transaction.account.currency.symbol }}</sup
+                    >{{ transaction.amount }}
+                </td>
                 <td>
-                    <sup>{{ account.currency.symbol }}</sup
-                    >{{ account.balance }}
+                    <sup>{{ transaction.account.currency.symbol }}</sup
+                    >{{ transaction.resultingAccountBalance }}
+                </td>
+                <td>
+                    <small>{{ toPrettyDatetime(transaction.datetime) }}</small>
+                </td>
+                <td>
+                    <strong v-if="transaction.name">{{
+                        transaction.name
+                    }}</strong>
+                    <p v-if="transaction.description">
+                        {{ transaction.description }}
+                    </p>
+                </td>
+                <td>
+                    {{ transaction.tagSet.map((e) => e.name).join(", ") }}
                 </td>
                 <td>
                     <router-link
                         :to="{
-                            name: 'dashboard-accounts-account',
-                            params: { id: account.id }
+                            name: 'dashboard-transactions-transaction',
+                            params: { id: transaction.id }
                         }"
                     >
                         <button>{{ $t("view") }}</button>
                     </router-link>
                     &nbsp;
                     <button
-                        @click="del(account.id)"
-                        :disabled="deleting === account.id"
+                        @click="del(transaction.id)"
+                        :disabled="deleting === transaction.id"
                     >
                         {{ $t("delete") }}
                     </button>
@@ -153,7 +177,7 @@ async function deleteSelected() {
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="4">
+                <td colspan="7">
                     <PaginatorPart
                         ref="paginator"
                         :value="paginatorValue"
@@ -169,10 +193,10 @@ async function deleteSelected() {
                         {{ $t("delete") }}
                     </button>
                 </td>
-                <td colspan="3">
+                <td colspan="7">
                     <router-link
                         :to="{
-                            name: 'dashboard-accounts-account',
+                            name: 'dashboard-transactions-transaction',
                             params: { id: 0 }
                         }"
                     >

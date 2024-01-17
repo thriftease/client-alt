@@ -96,6 +96,20 @@ const router = createRouter({
                     meta: { title: getTitle() },
                     component: () =>
                         import("@/views/dashboard/accounts/AccountView.vue")
+                },
+                {
+                    path: "transactions",
+                    name: "dashboard-transactions",
+                    meta: { title: getTitle($t("transactions")) },
+                    component: () =>
+                        import("@/views/dashboard/TransactionsView.vue")
+                },
+                {
+                    path: `transactions/:id${idRegex}`,
+                    name: "dashboard-transactions-transaction",
+                    meta: { title: getTitle() },
+                    component: () =>
+                        import("@/views/dashboard/accounts/AccountView.vue")
                 }
             ]
         }

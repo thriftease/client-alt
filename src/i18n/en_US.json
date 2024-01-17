@@ -55,5 +55,12 @@
     "balance": "Balance",
     "createdCurrencies": "Created currencies",
     "givenCurrencies": "Given Currencies",
-    "noCurrencies": "No currencies to list"
+    "noCurrencies": "No currencies to list",
+    "transaction": "Transaction",
+    "transactions": "Transactions",
+    "amount": "Amount",
+    "accountBalance": "Account balance",
+    "datetime": "Date & time",
+    "details": "Details",
+    "tags": "Tags"
 }

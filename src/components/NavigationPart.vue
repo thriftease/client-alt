@@ -8,6 +8,9 @@
         <router-link :to="{ name: 'dashboard-accounts' }">{{
             $t("accounts")
         }}</router-link>
+        <router-link :to="{ name: 'dashboard-transactions' }">{{
+            $t("transactions")
+        }}</router-link>
     </nav>
 </template>
 
