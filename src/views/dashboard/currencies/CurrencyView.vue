@@ -157,7 +157,7 @@ function selectCurrency() {
     if (input) {
         $v.value.abbreviation.$model = input.abbreviation.toUpperCase();
         $v.value.name.$model = input.name;
-        $v.value.symbol.$model = input.symbol.toUpperCase();
+        $v.value.symbol.$model = input.symbol;
     }
     selectedCurrency.value = "";
 }

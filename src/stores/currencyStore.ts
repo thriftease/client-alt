@@ -37,8 +37,8 @@ const useCurrencyStore = defineStore("currencyStore", () => {
         for (const k in fetched) {
             arr.push({
                 abbreviation: k,
-                name: fetched[k],
-                symbol: k
+                name: fetched[k] || k,
+                symbol: k.toUpperCase()
             });
         }
         arr.sort((a, b) => {
