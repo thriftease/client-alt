@@ -48,5 +48,8 @@
     "search": "Search",
     "filters": "Filters",
     "itemsPerPage": "Items per page",
-    "aboutToDeleteSelected": "You're about to delete $selected item(s)"
+    "aboutToDeleteSelected": "You're about to delete $selected item(s)",
+    "accounts": "Accounts",
+    "account": "Account",
+    "balance": "Balance"
 }

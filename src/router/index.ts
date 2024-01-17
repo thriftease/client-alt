@@ -80,6 +80,13 @@ const router = createRouter({
                     meta: { title: getTitle() },
                     component: () =>
                         import("@/views/dashboard/currencies/CurrencyView.vue")
+                },
+                {
+                    path: "accounts",
+                    name: "dashboard-accounts",
+                    meta: { title: getTitle($t("accounts")) },
+                    component: () =>
+                        import("@/views/dashboard/AccountsView.vue")
                 }
             ]
         }
