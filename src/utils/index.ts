@@ -152,6 +152,27 @@ function useSelector<T1, T2>(
     };
 }
 
+function toPrettyDatetime(datetime: string, locale: string = "en-US") {
+    // Create a Date object from the date string
+    const date = new Date(datetime);
+
+    // Format the date using Intl.DateTimeFormat
+    const options: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    };
+
+    const formattedDate = new Intl.DateTimeFormat(locale, options).format(
+        date
+    );
+
+    return formattedDate;
+}
+
 export {
     apolloClient,
     apolloMutate,
@@ -160,6 +181,7 @@ export {
     getQueryOrder,
     handleError,
     i18nClient,
+    toPrettyDatetime,
     useSelector,
     validators
 };
