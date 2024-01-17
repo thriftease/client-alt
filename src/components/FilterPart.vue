@@ -77,7 +77,7 @@ function getRoute(search: string, filters: string[], props = {}) {
         <select
             v-if="filters.length"
             v-model="selectedFilters"
-            size="3"
+            :size="filters.length > 1 ? 3 : 1"
             multiple
         >
             <option v-for="[key, val] of filters" :key="key" :value="key">
