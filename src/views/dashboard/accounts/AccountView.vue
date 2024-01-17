@@ -173,7 +173,7 @@ async function del() {
             error: res.error.value
         });
         if (payload) {
-            router.push({ name: "dashboard-currencies" });
+            router.push({ name: "dashboard-accounts" });
         }
     }
     deleting.value = false;
