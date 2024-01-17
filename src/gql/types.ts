@@ -33,8 +33,10 @@ export type Scalars = {
 };
 
 export type AccountFilterQueryInput = {
+    currency_Id?: InputMaybe<Scalars["Decimal"]["input"]>;
     currency_Id_Icontains?: InputMaybe<Scalars["Decimal"]["input"]>;
     id_Icontains?: InputMaybe<Scalars["Decimal"]["input"]>;
+    name?: InputMaybe<Scalars["String"]["input"]>;
     name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
 };
 
