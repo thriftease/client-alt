@@ -467,6 +467,7 @@ export type PaginatorType = {
 
 export type Query = {
     __typename?: "Query";
+    accountExisting?: Maybe<Scalars["Boolean"]["output"]>;
     authExisting?: Maybe<Scalars["Boolean"]["output"]>;
     getAccount?: Maybe<GetAccountQueryPayload>;
     getCurrency?: Maybe<GetCurrencyQueryPayload>;
@@ -478,6 +479,11 @@ export type Query = {
     listTags?: Maybe<ListTagsQueryPayload>;
     listTransactions?: Maybe<ListTransactionsQueryPayload>;
     test?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type QueryAccountExistingArgs = {
+    currency: Scalars["ID"]["input"];
+    name: Scalars["String"]["input"];
 };
 
 export type QueryAuthExistingArgs = {

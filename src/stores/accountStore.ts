@@ -140,12 +140,33 @@ const useAccountStore = defineStore("accountStore", () => {
         return re;
     }
 
+    async function existing(
+        currency: string | number,
+        name: string,
+        options = {}
+    ) {
+        const re = await apolloQuery<
+            { currency: string | number; name: string },
+            { result: Boolean }
+        >(
+            { currency, name },
+            gql`
+                query AccountExisting($currency: ID!, $name: String!) {
+                    result: accountExisting(currency: $currency, name: $name)
+                }
+            `,
+            options
+        );
+        return re;
+    }
+
     return {
         create,
         list,
         get,
         update,
-        delete: del
+        delete: del,
+        existing
     };
 });
 
