@@ -7,7 +7,7 @@ import {
     type DeleteAccountMutationPayload,
     type GetAccountQueryInput,
     type GetAccountQueryPayload,
-    type ListCurrenciesQueryPayload,
+    type ListAccountsQueryPayload,
     type PaginatorQueryInput,
     type UpdateAccountMutationInput,
     type UpdateAccountMutationPayload
@@ -49,7 +49,7 @@ const useAccountStore = defineStore("accountStore", () => {
     ) {
         const re = await apolloQuery<
             typeof params,
-            { result: ListCurrenciesQueryPayload }
+            { result: ListAccountsQueryPayload }
         >(
             params,
             gql`
