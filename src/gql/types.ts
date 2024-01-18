@@ -575,6 +575,12 @@ export type TransactionFilterQueryInput = {
 };
 
 /** An enumeration. */
+export enum TransactionOperation {
+    Credit = "CREDIT",
+    Debit = "DEBIT"
+}
+
+/** An enumeration. */
 export enum TransactionOrderQueryInput {
     DatetimeAsc = "DATETIME_ASC",
     DatetimeDesc = "DATETIME_DESC",
@@ -590,7 +596,10 @@ export type TransactionType = {
     description: Scalars["String"]["output"];
     id: Scalars["ID"]["output"];
     name: Scalars["String"]["output"];
-    resultingAccountBalance?: Maybe<Scalars["Decimal"]["output"]>;
+    newAccountBalance?: Maybe<Scalars["Decimal"]["output"]>;
+    oldAccountBalance?: Maybe<Scalars["Decimal"]["output"]>;
+    operation?: Maybe<TransactionOperation>;
+    scheduled?: Maybe<Scalars["Boolean"]["output"]>;
     tagSet: Array<TagType>;
 };
 

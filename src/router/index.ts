@@ -109,7 +109,9 @@ const router = createRouter({
                     name: "dashboard-transactions-transaction",
                     meta: { title: getTitle() },
                     component: () =>
-                        import("@/views/dashboard/accounts/AccountView.vue")
+                        import(
+                            "@/views/dashboard/transactions/TransactionView.vue"
+                        )
                 }
             ]
         }

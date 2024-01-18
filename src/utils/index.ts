@@ -1,5 +1,6 @@
 import type { ErrorType } from "@/gql";
 import apolloClient from "@/utils/apolloClient";
+import Dec from "@/utils/dec";
 import i18nClient from "@/utils/i18nClient";
 import validators from "@/utils/validators";
 import {
@@ -173,7 +174,26 @@ function toPrettyDatetime(datetime: string, locale: string = "en-US") {
     return formattedDate;
 }
 
+function toJsDatetime(date: Date) {
+    // Adjust for the local time zone offset
+    const offsetMinutes = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() - offsetMinutes);
+
+    // Format the date and time as a string suitable for the datetime-local input
+    return date.toISOString().slice(0, 16);
+}
+
+function toDbDatetime(date: Date) {
+    // Adjust for the local time zone offset
+    const offsetMinutes = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() + offsetMinutes);
+
+    // Format the date and time as a string suitable for the database
+    return date.toISOString();
+}
+
 export {
+    Dec,
     apolloClient,
     apolloMutate,
     apolloQuery,
@@ -181,6 +201,8 @@ export {
     getQueryOrder,
     handleError,
     i18nClient,
+    toDbDatetime,
+    toJsDatetime,
     toPrettyDatetime,
     useSelector,
     validators

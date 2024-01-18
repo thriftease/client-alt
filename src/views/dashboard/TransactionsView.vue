@@ -2,6 +2,7 @@
 import FilterPart from "@/components/FilterPart.vue";
 import PaginatorPart from "@/components/PaginatorPart.vue";
 import {
+    TransactionOperation,
     TransactionOrderQueryInput,
     type PaginatorType,
     type TransactionType
@@ -112,9 +113,9 @@ async function deleteSelected() {
                     <input type="checkbox" v-model="selectorSelectedAll" />
                 </th>
                 <th>{{ $t("account") }}</th>
+                <th>{{ $t("datetime") }}</th>
                 <th>{{ $t("amount") }}</th>
                 <th>{{ $t("accountBalance") }}</th>
-                <th>{{ $t("datetime") }}</th>
                 <th>{{ $t("details") }}</th>
                 <th>{{ $t("tags") }}</th>
                 <th>{{ $t("actions") }}</th>
@@ -130,9 +131,17 @@ async function deleteSelected() {
                     />
                 </td>
                 <td>{{ transaction.account.name }}</td>
+                <td>
+                    <small>{{ toPrettyDatetime(transaction.datetime) }}</small>
+                </td>
                 <td
                     :style="{
-                        color: +transaction.amount < 0 ? 'red' : 'green'
+                        color: transaction.scheduled
+                            ? 'gray'
+                            : transaction.operation ===
+                                TransactionOperation.Debit
+                              ? 'red'
+                              : 'green'
                     }"
                 >
                     <sup>{{ transaction.account.currency.symbol }}</sup
@@ -140,10 +149,12 @@ async function deleteSelected() {
                 </td>
                 <td>
                     <sup>{{ transaction.account.currency.symbol }}</sup
-                    >{{ transaction.resultingAccountBalance }}
-                </td>
-                <td>
-                    <small>{{ toPrettyDatetime(transaction.datetime) }}</small>
+                    >{{
+                        transaction.oldAccountBalance
+                    }}&nbsp;&rarr;&nbsp;<sup>{{
+                        transaction.account.currency.symbol
+                    }}</sup
+                    >{{ transaction.newAccountBalance }}
                 </td>
                 <td>
                     <strong v-if="transaction.name">{{

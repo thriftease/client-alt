@@ -62,5 +62,7 @@
     "accountBalance": "Account balance",
     "datetime": "Date & time",
     "details": "Details",
-    "tags": "Tags"
+    "tags": "Tags",
+    "noAccounts": "No accounts to list",
+    "description": "Description"
 }

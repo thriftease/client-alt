@@ -79,7 +79,10 @@ const transactionFragment = gql`
         tagSet {
             ...tagFragment
         }
-        resultingAccountBalance
+        oldAccountBalance
+        newAccountBalance
+        scheduled
+        operation
     }
 `;
 
