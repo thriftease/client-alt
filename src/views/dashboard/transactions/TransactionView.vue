@@ -337,13 +337,14 @@ function amountOnBlur() {
         <div>
             <label for="description">{{ $t("description") }}</label>
             <br />
-            <input
+            <textarea
                 id="description"
                 name="description"
-                type="text"
+                cols="20"
+                rows="5"
                 :maxlength="rules.description.maxLength.$params.max"
                 v-model="$v.description.$model"
-            />
+            ></textarea>
             <FieldErrorsPart
                 :errors="$v.description.$errors[0]"
                 :hidden="false"
