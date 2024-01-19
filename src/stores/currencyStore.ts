@@ -13,9 +13,10 @@ import {
     type UpdateCurrencyMutationInput,
     type UpdateCurrencyMutationPayload
 } from "@/gql";
-import { apolloMutate, apolloQuery } from "@/utils";
+import { Dec, apolloMutate, apolloQuery } from "@/utils";
 import { gql } from "@apollo/client/core";
 import axios from "axios";
+import type Decimal from "decimal.js";
 import { defineStore } from "pinia";
 
 let givenCurrencies: { [key: string]: string } | undefined = undefined;
@@ -199,6 +200,28 @@ const useCurrencyStore = defineStore("currencyStore", () => {
         return re;
     }
 
+    async function getRate(from: string, to: string) {
+        try {
+            const res = await axios.get<number>(
+                `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${from.toLowerCase()}/${to.toLowerCase()}.json`
+            );
+            return res.data;
+        } catch (err: any) {
+            return undefined;
+        }
+    }
+
+    async function convert<T extends number | string | Decimal>(
+        value: T,
+        from: string,
+        to: string
+    ) {
+        const rate = await getRate(from, to);
+        if (rate === undefined) return value;
+        const dec = new Dec(value);
+        return dec.mul(rate).toFixed();
+    }
+
     return {
         listGiven,
         listGivenAlt,
@@ -206,7 +229,9 @@ const useCurrencyStore = defineStore("currencyStore", () => {
         list,
         get,
         update,
-        delete: del
+        delete: del,
+        getRate,
+        convert
     };
 });
 
