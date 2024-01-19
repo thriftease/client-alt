@@ -9,6 +9,7 @@ import {
     useMutation
 } from "@vue/apollo-composable";
 import type { ErrorObject } from "@vuelidate/core";
+import numeral from "numeral";
 
 import {
     ApolloError,
@@ -239,6 +240,10 @@ function formatDecimal(
     return str;
 }
 
+function toPrettyDecimal(value: string | number) {
+    return numeral(value).format("0,0.00");
+}
+
 export {
     Dec,
     apolloClient,
@@ -253,6 +258,7 @@ export {
     toDecimal,
     toJsDatetime,
     toPrettyDatetime,
+    toPrettyDecimal,
     useSelector,
     validators
 };
