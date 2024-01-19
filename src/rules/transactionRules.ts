@@ -1,5 +1,4 @@
 import { validators } from "@/utils";
-import { decimal } from "@vuelidate/validators";
 
 const transactionRules = {
     account: {
@@ -10,7 +9,7 @@ const transactionRules = {
     },
     amount: {
         required: validators.required,
-        decimal: decimal
+        decimal: validators.decimal
     },
     name: {
         maxLength: validators.maxLength(50)
