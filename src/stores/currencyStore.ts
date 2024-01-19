@@ -202,10 +202,10 @@ const useCurrencyStore = defineStore("currencyStore", () => {
 
     async function getRate(from: string, to: string) {
         try {
-            const res = await axios.get<number>(
+            const res = await axios.get<{ [key: string]: any }>(
                 `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${from.toLowerCase()}/${to.toLowerCase()}.json`
             );
-            return res.data;
+            return res.data[to] as number;
         } catch (err: any) {
             return undefined;
         }
