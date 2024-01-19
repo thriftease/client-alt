@@ -2,6 +2,7 @@ import apolloClient from "@/utils/apolloClient";
 import i18nClient from "@/utils/i18nClient";
 import {
     and,
+    decimal,
     email,
     helpers,
     maxLength,
@@ -143,5 +144,6 @@ export default {
         getMessage("validations.password"),
         and(hasLowercase, hasUppercase, hasDigit, hasSpecialCharacter)
     ),
-    passwordConfirmation
+    passwordConfirmation,
+    decimal: withMessage(getMessage("validations.decimal"), decimal)
 };

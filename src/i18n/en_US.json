@@ -13,7 +13,8 @@
         "password": "Value must be a mix of lowercase, uppercase, digit(s), and special character(s)",
         "passwordConfirmation": "Value must be the same as the password",
         "abbreviationNotExisting": "Abbreviation is already existing",
-        "accountNotExisting": "Account name with this currency is already existing"
+        "accountNotExisting": "Account name with this currency is already existing",
+        "decimal": "Value must be a decimal"
     },
     "signIn": "Sign in",
     "email": "Email",
