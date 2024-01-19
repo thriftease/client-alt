@@ -69,5 +69,8 @@
     "description": "Description",
     "transfer": "Transfer",
     "debitFrom": "Debit from",
-    "creditTo": "Credit to"
+    "creditTo": "Credit to",
+    "amountToDebit": "Amount to debit",
+    "amountToCredit": "Amount to credit",
+    "rate": "Rate"
 }

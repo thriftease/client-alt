@@ -2,8 +2,13 @@
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
 import { AccountOrderQueryInput, type AccountType } from "@/gql";
 import { transactionRules as originalTransactionRules } from "@/rules";
-import { useAccountStore, useTransactionStore } from "@/stores";
 import {
+    useAccountStore,
+    useCurrencyStore,
+    useTransactionStore
+} from "@/stores";
+import {
+    Dec,
     formatDecimal,
     handleError,
     i18nClient,
@@ -18,6 +23,7 @@ import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
+const currencyStore = useCurrencyStore();
 const accountStore = useAccountStore();
 const transactionStore = useTransactionStore();
 
@@ -36,6 +42,7 @@ const data = ref({
     anotherAccount: "",
     datetime: toJsDatetime(new Date()),
     amount: "0.00",
+    rate: "1.000",
     name: "",
     description: ""
 });
@@ -46,12 +53,40 @@ const selectedAccount = computed(() =>
 const selectedAnotherAccount = computed(() =>
     accounts.value.find((e) => e.id === data.value.anotherAccount)
 );
+const anotherAmount = computed(() => {
+    try {
+        return toDecimal(
+            rate.value
+                ? new Dec(rate.value)
+                      .times(new Dec(data.value.amount))
+                      .toFixed(2)
+                : "0.00",
+            { negative: false }
+        );
+    } catch (error) {
+        return toDecimal("0.00");
+    }
+});
+const rate = computed({
+    get: () => {
+        if (
+            selectedAccount.value &&
+            selectedAnotherAccount.value &&
+            selectedAccount.value.currency.abbreviation ===
+                selectedAnotherAccount.value.currency.abbreviation
+        )
+            return "1.000";
+        return data.value.rate;
+    },
+    set: (v) => ($v.value.rate.$model = v)
+});
 
 const originalData = ref<typeof data.value | undefined>();
 
 const transactionRules = {
     ...originalTransactionRules,
-    anotherAccount: {}
+    anotherAccount: {},
+    rate: {}
 };
 
 const createRules = {
@@ -164,7 +199,7 @@ async function submit() {
                 });
                 res = await transactionStore.create({
                     account: data.value.anotherAccount,
-                    amount: data.value.amount,
+                    amount: anotherAmount.value,
                     name: data.value.name,
                     description: data.value.description,
                     datetime
@@ -221,6 +256,31 @@ function amountOnBlur() {
     let str = data.value.amount;
     input.$model = formatDecimal(str, { negative: type.value !== "transfer" });
 }
+
+function rateOnInput() {
+    const input = rate;
+    let str = data.value.rate;
+    input.value = toDecimal(str, { negative: false, decimalPlaces: 3 });
+}
+
+function rateOnBlur() {
+    const input = rate;
+    let str = data.value.rate;
+    input.value = formatDecimal(str, { negative: false, decimalPlaces: 3 });
+}
+
+async function updateRate() {
+    const a1 = selectedAccount.value;
+    const a2 = selectedAnotherAccount.value;
+    if (a1 && a2) {
+        const rt = await currencyStore.getRate(
+            a1.currency.abbreviation,
+            a2.currency.abbreviation
+        );
+        if (rt !== undefined)
+            rate.value = toDecimal("" + rt, { decimalPlaces: 3 });
+    }
+}
 </script>
 
 <template>
@@ -238,6 +298,7 @@ function amountOnBlur() {
                 name="account"
                 :disabled="!accounts.length"
                 v-model="$v.account.$model"
+                @change="updateRate"
             >
                 <option v-if="!accounts.length" value="" hidden selected>
                     {{ $t("noAccounts") }}
@@ -265,6 +326,7 @@ function amountOnBlur() {
                 name="anotherAccount"
                 :disabled="!accounts.length"
                 v-model="$v.anotherAccount.$model"
+                @change="updateRate"
             >
                 <option v-if="!accounts.length" value="" hidden selected>
                     {{ $t("noAccounts") }}
@@ -299,7 +361,13 @@ function amountOnBlur() {
             ></FieldErrorsPart>
         </div>
         <div>
-            <label for="amount">{{ $t("amount") }}</label>
+            <label for="amount">{{
+                $t(
+                    id === 0 && type === "transfer"
+                        ? "amountToDebit"
+                        : "amount"
+                )
+            }}</label>
             <br />
             <template v-if="selectedAccount">
                 <span>{{ selectedAccount.currency.symbol }}</span
@@ -316,6 +384,42 @@ function amountOnBlur() {
             />
             <FieldErrorsPart
                 :errors="$v.amount.$errors[0]"
+                :hidden="false"
+            ></FieldErrorsPart>
+        </div>
+        <div v-if="id === 0 && type === 'transfer'">
+            <label for="rate">{{ $t("amountToCredit") }}</label>
+            <br />
+            <span>{{ $t("rate") }}</span
+            >&nbsp;
+            <input
+                id="rate"
+                name="rate"
+                type="text"
+                inputmode="numeric"
+                v-model="rate"
+                :disabled="
+                    selectedAccount &&
+                    selectedAnotherAccount &&
+                    selectedAccount.currency.abbreviation ===
+                        selectedAnotherAccount.currency.abbreviation
+                "
+                style="width: 4em"
+                @input="rateOnInput"
+                @blur="rateOnBlur"
+            />&nbsp;
+            <template v-if="selectedAnotherAccount">
+                <span>{{ selectedAnotherAccount.currency.symbol }}</span
+                >&nbsp;
+            </template>
+            <input
+                type="text"
+                disabled
+                :value="anotherAmount"
+                style="width: 8em"
+            />
+            <FieldErrorsPart
+                :errors="$v.rate.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
