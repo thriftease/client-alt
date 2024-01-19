@@ -192,10 +192,14 @@ function toDbDatetime(date: Date) {
     return date.toISOString();
 }
 
-function toDecimal(value: string, maxDigits = 18, decimalPlaces = 2) {
+function toDecimal(
+    value: string,
+    { negative = true, maxDigits = 18, decimalPlaces = 2 } = {}
+) {
     let str = value;
 
-    str = str.replace(/[^0-9\-.]/g, "");
+    const allowed = negative ? /[^0-9\-.]/g : /[^0-9.]/g;
+    str = str.replace(allowed, "");
 
     const left = new RegExp(`^-?\\d{0,${maxDigits - decimalPlaces}}`, "g");
     const right = new RegExp(`\\.\\d{0,${decimalPlaces}}`, "g");
@@ -211,7 +215,10 @@ function toDecimal(value: string, maxDigits = 18, decimalPlaces = 2) {
     return str;
 }
 
-function formatDecimal(value: string, maxDigits = 18, decimalPlaces = 2) {
+function formatDecimal(
+    value: string,
+    { negative = true, maxDigits = 18, decimalPlaces = 2 } = {}
+) {
     let str = value;
 
     const [left, right] = str.split(".");
@@ -224,6 +231,10 @@ function formatDecimal(value: string, maxDigits = 18, decimalPlaces = 2) {
     str += ".";
     if (!right) str += "0".repeat(decimalPlaces);
     else str += right;
+
+    if (!negative && str && str[0] == "-") {
+        str = str.substring(1);
+    }
 
     return str;
 }

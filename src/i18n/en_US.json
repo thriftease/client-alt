@@ -14,7 +14,8 @@
         "passwordConfirmation": "Value must be the same as the password",
         "abbreviationNotExisting": "Abbreviation is already existing",
         "accountNotExisting": "Account name with this currency is already existing",
-        "decimal": "Value must be a decimal"
+        "decimal": "Value must be a decimal",
+        "minValue": "The minimum value allowed is $params.min"
     },
     "signIn": "Sign in",
     "email": "Email",
@@ -65,5 +66,8 @@
     "details": "Details",
     "tags": "Tags",
     "noAccounts": "No accounts to list",
-    "description": "Description"
+    "description": "Description",
+    "transfer": "Transfer",
+    "debitFrom": "Debit from",
+    "creditTo": "Credit to"
 }

@@ -8,7 +8,8 @@ import {
     handleError,
     i18nClient,
     toDecimal,
-    toJsDatetime
+    toJsDatetime,
+    validators
 } from "@/utils";
 import useVuelidate from "@vuelidate/core";
 import { computed, ref } from "vue";
@@ -20,11 +21,18 @@ const accountStore = useAccountStore();
 const transactionStore = useTransactionStore();
 
 const id = computed(() => +route.params.id);
+const type = computed<"transfer" | undefined | null>(() => {
+    const typ = route.query.type;
+    if (typ === undefined || typ === null) return typ;
+    if (typ === "transfer") return typ;
+    return undefined;
+});
 
 const accounts = ref<AccountType[]>([]);
 
 const data = ref({
     account: "",
+    anotherAccount: "",
     datetime: toJsDatetime(new Date()),
     amount: "0.00",
     name: "",
@@ -38,18 +46,35 @@ const selectedAccount = computed(() =>
 const originalData = ref<typeof data.value | undefined>();
 
 const transactionRules = {
-    ...originalTransactionRules
+    ...originalTransactionRules,
+    anotherAccount: {}
 };
 
 const createRules = {
     ...transactionRules
 };
 
+const createTransferRules = {
+    ...createRules,
+    anotherAccount: {
+        ...createRules.account
+    },
+    amount: {
+        ...createRules.amount,
+        minValue: validators.minValue(0.01)
+    }
+};
+
 const updateRules = {
     ...transactionRules
 };
 
-const rules = id.value > 0 ? updateRules : createRules;
+const rules =
+    id.value > 0
+        ? updateRules
+        : type.value !== "transfer"
+          ? createRules
+          : createTransferRules;
 
 const $v = useVuelidate(rules, data);
 
@@ -108,11 +133,37 @@ async function submit() {
         let res;
         const datetime = data.value.datetime;
         if (id.value === 0) {
-            res = await transactionStore.create({ ...data.value, datetime });
+            if (type.value !== "transfer") {
+                res = await transactionStore.create({
+                    account: data.value.account,
+                    amount: data.value.amount,
+                    name: data.value.name,
+                    description: data.value.description,
+                    datetime
+                });
+            } else {
+                await transactionStore.create({
+                    account: data.value.account,
+                    amount: `-${data.value.amount}`,
+                    name: data.value.name,
+                    description: data.value.description,
+                    datetime
+                });
+                res = await transactionStore.create({
+                    account: data.value.anotherAccount,
+                    amount: data.value.amount,
+                    name: data.value.name,
+                    description: data.value.description,
+                    datetime
+                });
+            }
         } else {
             res = await transactionStore.update({
                 id: route.params.id as string,
-                ...data.value,
+                account: data.value.account,
+                amount: data.value.amount,
+                name: data.value.name,
+                description: data.value.description,
                 datetime
             });
         }
@@ -149,13 +200,13 @@ async function del() {
 function amountOnInput() {
     const input = $v.value.amount;
     let str = data.value.amount;
-    input.$model = toDecimal(str);
+    input.$model = toDecimal(str, { negative: type.value !== "transfer" });
 }
 
 function amountOnBlur() {
     const input = $v.value.amount;
     let str = data.value.amount;
-    input.$model = formatDecimal(str);
+    input.$model = formatDecimal(str, { negative: type.value !== "transfer" });
 }
 </script>
 
@@ -165,7 +216,9 @@ function amountOnBlur() {
 
     <form @submit.prevent="submit" novalidate>
         <div>
-            <label for="account">{{ $t("account") }}</label>
+            <label for="account">{{
+                $t(id === 0 && type === "transfer" ? "debitFrom" : "account")
+            }}</label>
             <br />
             <select
                 id="account"
@@ -181,11 +234,38 @@ function amountOnBlur() {
                     :key="account.id"
                     :value="account.id"
                 >
-                    {{ account.name }}
+                    {{ account.name }}&nbsp;({{ account.currency.symbol
+                    }}{{ account.balance }})
                 </option>
             </select>
             <FieldErrorsPart
                 :errors="$v.account.$errors[0]"
+                :hidden="false"
+            ></FieldErrorsPart>
+        </div>
+        <div v-if="id === 0 && type === 'transfer'">
+            <label for="another-account">{{ $t("creditTo") }}</label>
+            <br />
+            <select
+                id="another-account"
+                name="anotherAccount"
+                :disabled="!accounts.length"
+                v-model="$v.anotherAccount.$model"
+            >
+                <option v-if="!accounts.length" value="" hidden selected>
+                    {{ $t("noAccounts") }}
+                </option>
+                <option
+                    v-for="account of accounts"
+                    :key="account.id"
+                    :value="account.id"
+                >
+                    {{ account.name }}&nbsp;({{ account.currency.symbol
+                    }}{{ account.balance }})
+                </option>
+            </select>
+            <FieldErrorsPart
+                :errors="$v.anotherAccount.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
         </div>

@@ -38,7 +38,10 @@ async function setup() {
     const res = await transactionStore.list({
         paginator: paginator.value?.query,
         filter: filter.value?.record,
-        order: [TransactionOrderQueryInput.DatetimeDesc],
+        order: [
+            TransactionOrderQueryInput.DatetimeDesc,
+            TransactionOrderQueryInput.IdDesc
+        ],
         options: { fetchPolicy: "network-only" }
     });
     if (res.payload.value) {
@@ -209,10 +212,21 @@ async function deleteSelected() {
                     <router-link
                         :to="{
                             name: 'dashboard-transactions-transaction',
+                            params: { id: 0 },
+                            query: { type: 'transfer' }
+                        }"
+                    >
+                        <button style="width: 25%">
+                            {{ $t("transfer") }}
+                        </button>
+                    </router-link>
+                    <router-link
+                        :to="{
+                            name: 'dashboard-transactions-transaction',
                             params: { id: 0 }
                         }"
                     >
-                        <button style="width: 100%">{{ $t("add") }}</button>
+                        <button style="width: 75%">{{ $t("add") }}</button>
                     </router-link>
                 </td>
             </tr>

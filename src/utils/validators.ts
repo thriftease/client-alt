@@ -7,6 +7,7 @@ import {
     helpers,
     maxLength,
     minLength,
+    minValue,
     required,
     sameAs,
     type MessageProps
@@ -91,6 +92,14 @@ function maxLength_(max: number | Ref<number>) {
     ) as typeof validator;
 }
 
+function minValue_(min: number | Ref<number>) {
+    const validator = minValue(min);
+    return withMessage(
+        getMessage("validations.minValue"),
+        validator
+    ) as typeof validator;
+}
+
 const lowercaseRegex = /[a-z]/;
 const uppercaseRegex = /[A-Z]/;
 const digitRegex = /[0-9]/;
@@ -145,5 +154,6 @@ export default {
         and(hasLowercase, hasUppercase, hasDigit, hasSpecialCharacter)
     ),
     passwordConfirmation,
-    decimal: withMessage(getMessage("validations.decimal"), decimal)
+    decimal: withMessage(getMessage("validations.decimal"), decimal),
+    minValue: minValue_
 };
