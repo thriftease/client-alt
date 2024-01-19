@@ -85,9 +85,18 @@ const $v = useVuelidate(rules, data);
 const transactionTitle = i18nClient.global.t("transaction").toLowerCase();
 const addTransactionTitle =
     i18nClient.global.t("add") + " " + transactionTitle;
+const addTransferTransactionTitle = [
+    i18nClient.global.t("add"),
+    i18nClient.global.t("transfer").toLowerCase(),
+    transactionTitle
+].join(" ");
 const viewTransactionTitle = ref(i18nClient.global.t("transaction"));
 const title = computed(() =>
-    id.value === 0 ? addTransactionTitle : viewTransactionTitle.value
+    id.value === 0
+        ? type.value === "transfer"
+            ? addTransferTransactionTitle
+            : addTransactionTitle
+        : viewTransactionTitle.value
 );
 async function setup() {
     const res = await accountStore.list({
@@ -115,10 +124,10 @@ async function setup() {
 
             originalData.value = { ...data.value };
 
-            viewTransactionTitle.value =
-                data.value.name +
-                " " +
-                viewTransactionTitle.value.toLowerCase();
+            // viewTransactionTitle.value =
+            //     data.value.name +
+            //     " " +
+            //     viewTransactionTitle.value.toLowerCase();
         } else {
             router.replace({
                 name: "dashboard-transactions-transaction",
