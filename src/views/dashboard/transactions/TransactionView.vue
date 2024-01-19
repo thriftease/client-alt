@@ -11,11 +11,8 @@ import {
     toJsDatetime
 } from "@/utils";
 import useVuelidate from "@vuelidate/core";
-import { helpers } from "@vuelidate/validators";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
-const { withAsync, withMessage } = helpers;
 
 const router = useRouter();
 const route = useRoute();
@@ -33,6 +30,10 @@ const data = ref({
     name: "",
     description: ""
 });
+
+const selectedAccount = computed(() =>
+    accounts.value.find((e) => e.id === data.value.account)
+);
 
 const originalData = ref<typeof data.value | undefined>();
 
@@ -205,6 +206,10 @@ function amountOnBlur() {
         <div>
             <label for="amount">{{ $t("amount") }}</label>
             <br />
+            <template v-if="selectedAccount">
+                <span>{{ selectedAccount.currency.symbol }}</span
+                >&nbsp;
+            </template>
             <input
                 id="amount"
                 name="amount"
