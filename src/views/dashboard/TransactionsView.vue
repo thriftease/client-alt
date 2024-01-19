@@ -10,7 +10,6 @@ import {
 import router from "@/router";
 import { useTransactionStore } from "@/stores";
 import {
-    getQueryOrder,
     handleError,
     i18nClient,
     toPrettyDatetime,
@@ -24,7 +23,7 @@ const transactionStore = useTransactionStore();
 
 const paginator = ref<InstanceType<typeof PaginatorPart>>();
 const filter = ref<InstanceType<typeof FilterPart>>();
-const order = ref(getQueryOrder<TransactionOrderQueryInput>(route.query));
+// const order = ref(getQueryOrder<TransactionOrderQueryInput>(route.query));
 
 const transactions = ref<TransactionType[]>([]);
 const paginatorValue = ref<PaginatorType>();
@@ -160,9 +159,11 @@ async function deleteSelected() {
                     <strong v-if="transaction.name">{{
                         transaction.name
                     }}</strong>
-                    <p v-if="transaction.description">
-                        {{ transaction.description }}
-                    </p>
+                    <div v-if="transaction.description">
+                        <em>
+                            {{ transaction.description }}
+                        </em>
+                    </div>
                 </td>
                 <td>
                     {{ transaction.tagSet.map((e) => e.name).join(", ") }}
