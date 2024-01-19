@@ -43,6 +43,9 @@ const data = ref({
 const selectedAccount = computed(() =>
     accounts.value.find((e) => e.id === data.value.account)
 );
+const selectedAnotherAccount = computed(() =>
+    accounts.value.find((e) => e.id === data.value.anotherAccount)
+);
 
 const originalData = ref<typeof data.value | undefined>();
 
@@ -234,6 +237,7 @@ function amountOnBlur() {
                     v-for="account of accounts"
                     :key="account.id"
                     :value="account.id"
+                    :disabled="selectedAnotherAccount === account"
                 >
                     {{ account.name }}&nbsp;({{ account.currency.symbol
                     }}{{ toPrettyDecimal(account.balance) }})
@@ -260,6 +264,7 @@ function amountOnBlur() {
                     v-for="account of accounts"
                     :key="account.id"
                     :value="account.id"
+                    :disabled="selectedAccount === account"
                 >
                     {{ account.name }}&nbsp;({{ account.currency.symbol
                     }}{{ toPrettyDecimal(account.balance) }})
