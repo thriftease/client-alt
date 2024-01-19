@@ -192,16 +192,54 @@ function toDbDatetime(date: Date) {
     return date.toISOString();
 }
 
+function toDecimal(value: string, maxDigits = 18, decimalPlaces = 2) {
+    let str = value;
+
+    str = str.replace(/[^0-9\-.]/g, "");
+
+    const left = new RegExp(`^-?\\d{0,${maxDigits - decimalPlaces}}`, "g");
+    const right = new RegExp(`\\.\\d{0,${decimalPlaces}}`, "g");
+
+    const leftMatch = str.match(left);
+    const rightMatch = str.match(right);
+
+    str = "";
+
+    if (leftMatch) str += leftMatch[0];
+    if (rightMatch) str += rightMatch[0];
+
+    return str;
+}
+
+function formatDecimal(value: string, maxDigits = 18, decimalPlaces = 2) {
+    let str = value;
+
+    const [left, right] = str.split(".");
+
+    str = "";
+
+    if (!left) str += "0";
+    else if (left === "-") str += left + "0";
+    else str += left.substring(0, maxDigits + (left[0] === "-" ? 1 : 0));
+    str += ".";
+    if (!right) str += "0".repeat(decimalPlaces);
+    else str += right;
+
+    return str;
+}
+
 export {
     Dec,
     apolloClient,
     apolloMutate,
     apolloQuery,
     flattenErrors,
+    formatDecimal,
     getQueryOrder,
     handleError,
     i18nClient,
     toDbDatetime,
+    toDecimal,
     toJsDatetime,
     toPrettyDatetime,
     useSelector,

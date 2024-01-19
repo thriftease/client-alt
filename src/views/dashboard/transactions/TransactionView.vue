@@ -3,7 +3,13 @@ import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
 import { AccountOrderQueryInput, type AccountType } from "@/gql";
 import { transactionRules as originalTransactionRules } from "@/rules";
 import { useAccountStore, useTransactionStore } from "@/stores";
-import { handleError, i18nClient, toJsDatetime } from "@/utils";
+import {
+    formatDecimal,
+    handleError,
+    i18nClient,
+    toDecimal,
+    toJsDatetime
+} from "@/utils";
 import useVuelidate from "@vuelidate/core";
 import { helpers } from "@vuelidate/validators";
 import { computed, ref } from "vue";
@@ -114,8 +120,7 @@ async function submit() {
             error: res.error.value
         });
         if (payload) {
-            // router.push({ name: "dashboard-transactions" });
-            console.log(payload);
+            router.push({ name: "dashboard-transactions" });
         }
     }
     submitting.value = false;
@@ -140,67 +145,16 @@ async function del() {
     deleting.value = false;
 }
 
-function restrictInputAmount() {
+function amountOnInput() {
     const input = $v.value.amount;
     let str = data.value.amount;
-    input.$model = str.replace(/[^0-9\-.]/g, "");
-
-    const sign = "-";
-    const dot = ".";
-
-    if (str.length > 1) {
-        const substr = str.substring(1);
-        if (substr.includes(sign)) {
-            input.$model = str[0] + substr.replace(sign, "");
-        }
-    }
-
-    const dotIdx = str.indexOf(dot);
-    if (dotIdx !== -1) {
-        {
-            const substr = str.substring(dotIdx + 1);
-            if (substr.includes(dot)) {
-                input.$model =
-                    str.substring(0, dotIdx + 1) + substr.replace(dot, "");
-            }
-        }
-        {
-            const substr = str.substring(dotIdx + 1);
-            if (substr.length > 2) {
-                input.$model =
-                    str.substring(0, dotIdx + 1) + substr.substring(0, 2);
-            }
-        }
-    } else if (str.length > 0) {
-        const matches = str.match(/\d/g);
-        if (matches && matches.length === 17) {
-            const startIdx = str[0] === sign ? 1 : 0;
-            const endIdx = startIdx + (matches.length - 1);
-            input.$model =
-                str.substring(0, endIdx) + "." + str.substring(endIdx + 1);
-        }
-    }
+    input.$model = toDecimal(str);
 }
 
-function restrictAmount() {
-    const maxDigits = 18;
-    // const decimalPlaces = 2;
-    // const leftDigits = maxDigits - 2 - decimalPlaces;
-    // const maxVal = new Dec("9".repeat(leftDigits) + "." + "9".repeat(decimalPlaces));
-    // const minVal = new Dec("-" + maxVal);
-
-    // const amount = data.value.amount;
-    // if (!amount.includes(".")) {
-    //     $v.value.amount.$model = amount + "." + "0".repeat(decimalPlaces);
-    //     restrictAmount();
-    // } else {
-    //     let [left, right] = amount.split(".");
-    //     left = left.substring(left.length - leftDigits, left.length);
-    //     right = right.substring(0, decimalPlaces);
-    //     if (right.length !== decimalPlaces)
-    //         right = right + "0".repeat(decimalPlaces - right.length);
-    //     $v.value.amount.$model = left + "." + right;
-    // }
+function amountOnBlur() {
+    const input = $v.value.amount;
+    let str = data.value.amount;
+    input.$model = formatDecimal(str);
 }
 </script>
 
@@ -257,8 +211,8 @@ function restrictAmount() {
                 type="text"
                 inputmode="numeric"
                 v-model="$v.amount.$model"
-                @input="restrictInputAmount"
-                @blur="restrictAmount"
+                @input="amountOnInput"
+                @blur="amountOnBlur"
             />
             <FieldErrorsPart
                 :errors="$v.amount.$errors[0]"
