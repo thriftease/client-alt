@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
-import type { CreateCurrencyMutationInput } from "@/gql";
+import type { GivenCurrencyType } from "@/gql";
 import { currencyRules } from "@/rules";
 import { useCurrencyStore } from "@/stores";
 import { handleError, i18nClient } from "@/utils";
@@ -18,7 +18,7 @@ const currencyStore = useCurrencyStore();
 const id = computed(() => +route.params.id);
 
 const takenAbbreviations = ref<string[]>([]);
-const givenCurrencies = ref<CreateCurrencyMutationInput[]>([]);
+const givenCurrencies = ref<GivenCurrencyType[]>([]);
 
 const data = ref({
     abbreviation: "",
@@ -80,7 +80,8 @@ async function setup() {
             });
         }
     } else {
-        givenCurrencies.value = await currencyStore.listGiven();
+        givenCurrencies.value = (await currencyStore.listGivenAlt()).payload
+            .value?.result!;
         const { payload } = await currencyStore.list({
             filter: {
                 abbreviation_In: givenCurrencies.value.map(

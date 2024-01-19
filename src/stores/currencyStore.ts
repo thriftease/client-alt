@@ -7,6 +7,7 @@ import {
     type DeleteCurrencyMutationPayload,
     type GetCurrencyQueryInput,
     type GetCurrencyQueryPayload,
+    type GivenCurrencyType,
     type ListCurrenciesQueryPayload,
     type PaginatorQueryInput,
     type UpdateCurrencyMutationInput,
@@ -55,6 +56,20 @@ const useCurrencyStore = defineStore("currencyStore", () => {
             return 0;
         });
         return arr;
+    }
+
+    async function listGivenAlt() {
+        const re = await apolloQuery<{}, { result: GivenCurrencyType[] }>(
+            {},
+            gql`
+                query ListGivenCurrencies {
+                    result: listGivenCurrencies {
+                        ...givenCurrencyFragment
+                    }
+                }
+            `
+        );
+        return re;
     }
 
     async function create(currency: CreateCurrencyMutationInput) {
@@ -186,6 +201,7 @@ const useCurrencyStore = defineStore("currencyStore", () => {
 
     return {
         listGiven,
+        listGivenAlt,
         create,
         list,
         get,

@@ -2,8 +2,8 @@
 import FieldErrorsPart from "@/components/FieldErrorsPart.vue";
 import {
     CurrencyOrderQueryInput,
-    type CreateCurrencyMutationInput,
-    type CurrencyType
+    type CurrencyType,
+    type GivenCurrencyType
 } from "@/gql";
 import { accountRules as originalAccountRules } from "@/rules";
 import { useAccountStore, useCurrencyStore } from "@/stores";
@@ -23,7 +23,7 @@ const accountStore = useAccountStore();
 const id = computed(() => +route.params.id);
 
 const takenAbbreviations = ref<string[]>([]);
-const givenCurrencies = ref<CreateCurrencyMutationInput[]>([]);
+const givenCurrencies = ref<GivenCurrencyType[]>([]);
 
 const currencies = ref<CurrencyType[]>([]);
 
@@ -93,7 +93,8 @@ async function setup() {
         currencies.value = res.payload.value.result.data as CurrencyType[];
     }
 
-    givenCurrencies.value = await currencyStore.listGiven();
+    givenCurrencies.value = (await currencyStore.listGivenAlt()).payload.value
+        ?.result!;
     takenAbbreviations.value = currencies.value.map((e) => e?.abbreviation!);
 
     if (id.value !== 0) {

@@ -309,6 +309,13 @@ export type GetUserQueryPayload = {
     data?: Maybe<UserType>;
 };
 
+export type GivenCurrencyType = {
+    __typename?: "GivenCurrencyType";
+    abbreviation: Scalars["String"]["output"];
+    name: Scalars["String"]["output"];
+    symbol: Scalars["String"]["output"];
+};
+
 export type ListAccountsQueryPayload = {
     __typename?: "ListAccountsQueryPayload";
     data: Array<Maybe<AccountType>>;
@@ -476,6 +483,7 @@ export type Query = {
     getUser?: Maybe<GetUserQueryPayload>;
     listAccounts?: Maybe<ListAccountsQueryPayload>;
     listCurrencies?: Maybe<ListCurrenciesQueryPayload>;
+    listGivenCurrencies?: Maybe<Array<GivenCurrencyType>>;
     listTags?: Maybe<ListTagsQueryPayload>;
     listTransactions?: Maybe<ListTransactionsQueryPayload>;
     test?: Maybe<Scalars["String"]["output"]>;

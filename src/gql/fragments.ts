@@ -47,6 +47,14 @@ const currencyFragment = gql`
     }
 `;
 
+const givenCurrencyFragment = gql`
+    fragment givenCurrencyFragment on GivenCurrencyType {
+        abbreviation
+        symbol
+        name
+    }
+`;
+
 const accountFragment = gql`
     fragment accountFragment on AccountType {
         id
@@ -90,6 +98,7 @@ export {
     accountFragment,
     currencyFragment,
     errorFragment,
+    givenCurrencyFragment,
     pageFragment,
     paginatorFragment,
     tagFragment,
