@@ -13,6 +13,7 @@ import {
     handleError,
     i18nClient,
     toPrettyDatetime,
+    toPrettyDecimal,
     useSelector
 } from "@/utils";
 import { onMounted, ref, watch } from "vue";
@@ -147,16 +148,16 @@ async function deleteSelected() {
                     }"
                 >
                     <sup>{{ transaction.account.currency.symbol }}</sup
-                    >{{ transaction.amount }}
+                    >{{ toPrettyDecimal(transaction.amount) }}
                 </td>
                 <td>
                     <sup>{{ transaction.account.currency.symbol }}</sup
                     >{{
-                        transaction.oldAccountBalance
+                        toPrettyDecimal(transaction.oldAccountBalance)
                     }}&nbsp;&rarr;&nbsp;<sup>{{
                         transaction.account.currency.symbol
                     }}</sup
-                    >{{ transaction.newAccountBalance }}
+                    >{{ toPrettyDecimal(transaction.newAccountBalance) }}
                 </td>
                 <td>
                     <strong v-if="transaction.name">{{

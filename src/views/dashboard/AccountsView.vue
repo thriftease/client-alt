@@ -9,7 +9,13 @@ import {
 } from "@/gql";
 import router from "@/router";
 import { useAccountStore } from "@/stores";
-import { getQueryOrder, handleError, i18nClient, useSelector } from "@/utils";
+import {
+    getQueryOrder,
+    handleError,
+    i18nClient,
+    toPrettyDecimal,
+    useSelector
+} from "@/utils";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -130,7 +136,7 @@ async function deleteSelected() {
                 <td>{{ account.name }}</td>
                 <td>
                     <sup>{{ account.currency.symbol }}</sup
-                    >{{ account.balance }}
+                    >{{ toPrettyDecimal(account.balance) }}
                 </td>
                 <td>
                     <router-link

@@ -9,6 +9,7 @@ import {
     i18nClient,
     toDecimal,
     toJsDatetime,
+    toPrettyDecimal,
     validators
 } from "@/utils";
 import useVuelidate from "@vuelidate/core";
@@ -235,7 +236,7 @@ function amountOnBlur() {
                     :value="account.id"
                 >
                     {{ account.name }}&nbsp;({{ account.currency.symbol
-                    }}{{ account.balance }})
+                    }}{{ toPrettyDecimal(account.balance) }})
                 </option>
             </select>
             <FieldErrorsPart
@@ -261,7 +262,7 @@ function amountOnBlur() {
                     :value="account.id"
                 >
                     {{ account.name }}&nbsp;({{ account.currency.symbol
-                    }}{{ account.balance }})
+                    }}{{ toPrettyDecimal(account.balance) }})
                 </option>
             </select>
             <FieldErrorsPart
