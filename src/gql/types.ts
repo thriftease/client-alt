@@ -562,7 +562,9 @@ export type TagType = {
 };
 
 export type TransactionFilterQueryInput = {
+    account_Currency_Name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
     account_Id_Icontains?: InputMaybe<Scalars["Decimal"]["input"]>;
+    account_Name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
     amount_Icontains?: InputMaybe<Scalars["Decimal"]["input"]>;
     datetime_Day?: InputMaybe<Scalars["Decimal"]["input"]>;
     datetime_Gt?: InputMaybe<Scalars["DateTime"]["input"]>;
@@ -580,6 +582,7 @@ export type TransactionFilterQueryInput = {
     description_Icontains?: InputMaybe<Scalars["String"]["input"]>;
     id_Icontains?: InputMaybe<Scalars["Decimal"]["input"]>;
     name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
+    tag_Name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 /** An enumeration. */

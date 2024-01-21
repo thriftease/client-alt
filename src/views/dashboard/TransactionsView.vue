@@ -103,14 +103,23 @@ async function deleteSelected() {
     <br />
     <table>
         <thead>
-            <!-- <tr>
+            <tr>
                 <td colspan="7">
                     <FilterPart
                         ref="filter"
-                        :filters="[['name_Icontains', $t('name')]]"
+                        :filters="[
+                            ['account_Name_Icontains', $t('account')],
+                            [
+                                'account_Currency_Name_Icontains',
+                                $t('currency')
+                            ],
+                            ['name_Icontains', $t('name')],
+                            ['description_Icontains', $t('description')],
+                            ['tag_Name_Icontains', $t('tags')]
+                        ]"
                     ></FilterPart>
                 </td>
-            </tr> -->
+            </tr>
             <tr>
                 <th>
                     <input type="checkbox" v-model="selectorSelectedAll" />
