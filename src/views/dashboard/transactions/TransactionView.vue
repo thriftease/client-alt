@@ -44,7 +44,8 @@ const data = ref({
     amount: "0.00",
     rate: "1.000",
     name: "",
-    description: ""
+    description: "",
+    tags: [] as string[]
 });
 
 const selectedAccount = computed(() =>
@@ -86,7 +87,8 @@ const originalData = ref<typeof data.value | undefined>();
 const transactionRules = {
     ...originalTransactionRules,
     anotherAccount: {},
-    rate: {}
+    rate: {},
+    tags: {}
 };
 
 const createRules = {
@@ -157,6 +159,8 @@ async function setup() {
             $v.value.name.$model = payload.result.data!.name;
             $v.value.description.$model = payload.result.data!.description;
 
+            data.value.tags = payload.result.data!.tagSet.map((e) => e.name);
+
             originalData.value = { ...data.value };
 
             // viewTransactionTitle.value =
@@ -187,7 +191,8 @@ async function submit() {
                     amount: data.value.amount,
                     name: data.value.name,
                     description: data.value.description,
-                    datetime
+                    datetime,
+                    tags: data.value.tags
                 });
             } else {
                 await transactionStore.create({
@@ -195,14 +200,16 @@ async function submit() {
                     amount: `-${data.value.amount}`,
                     name: data.value.name,
                     description: data.value.description,
-                    datetime
+                    datetime,
+                    tags: data.value.tags
                 });
                 res = await transactionStore.create({
                     account: data.value.anotherAccount,
                     amount: anotherAmount.value,
                     name: data.value.name,
                     description: data.value.description,
-                    datetime
+                    datetime,
+                    tags: data.value.tags
                 });
             }
         } else {
@@ -212,7 +219,9 @@ async function submit() {
                 amount: data.value.amount,
                 name: data.value.name,
                 description: data.value.description,
-                datetime
+                datetime,
+                addTags: data.value.tags,
+                removeTags: tagsToRemove.value
             });
         }
         const payload = handleError({
@@ -280,6 +289,17 @@ async function updateRate() {
         if (rt !== undefined)
             rate.value = toDecimal("" + rt, { decimalPlaces: 3 });
     }
+}
+
+function addTag() {
+    data.value.tags.push("");
+}
+
+const tagsToRemove = ref<string[]>([]);
+function removeTag(index: number) {
+    const tag = data.value.tags[index];
+    data.value.tags.splice(index, 1);
+    if (!tagsToRemove.value.includes(tag)) tagsToRemove.value.push(tag);
 }
 </script>
 
@@ -449,6 +469,26 @@ async function updateRate() {
                 :maxlength="rules.description.maxLength.$params.max"
                 v-model="$v.description.$model"
             ></textarea>
+            <FieldErrorsPart
+                :errors="$v.description.$errors[0]"
+                :hidden="false"
+            ></FieldErrorsPart>
+        </div>
+        <div>
+            <label for="tags">{{ $t("tags") }}</label>
+            <br />
+            <span v-for="(tag, idx) of data.tags" :key="idx">
+                <input
+                    :id="`tags[${idx}]`"
+                    :name="`tags[${idx}]`"
+                    type="text"
+                    v-model="data.tags[idx]"
+                    style="width: 5em"
+                />
+                <button @click.prevent="removeTag(idx)">&times;</button>
+                &nbsp;
+            </span>
+            <button @click.prevent="addTag">&plus;</button>
             <FieldErrorsPart
                 :errors="$v.description.$errors[0]"
                 :hidden="false"
