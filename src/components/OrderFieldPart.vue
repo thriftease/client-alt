@@ -80,13 +80,22 @@ function orderBy(arr: string[], reverse = false, push = true) {
 function selectOrder() {
     emits("order", orderBy);
 }
+
+function toggleOrder() {
+    if (selectedOrder.value === null) {
+        selectedOrder.value = props.asc;
+        return;
+    }
+    selectedOrder.value =
+        selectedOrder.value === props.asc ? props.desc : props.asc;
+}
 </script>
 
 <template>
-    <select v-model="selectedOrder">
-        <option :value="null" hidden>{{ name }}</option>
-        <option v-for="ord of [asc, desc]" :key="ord" :value="ord">
-            {{ name }}&nbsp;{{ ord === asc ? "&uarr;" : "&darr;" }}
-        </option>
-    </select>
+    <button @click.prevent="toggleOrder">
+        {{ name }}
+        <template v-if="selectedOrder !== null">
+            &nbsp;{{ selectedOrder === asc ? "&uarr;" : "&darr;" }}
+        </template>
+    </button>
 </template>
