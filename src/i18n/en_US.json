@@ -15,7 +15,8 @@
         "abbreviationNotExisting": "Abbreviation is already existing",
         "accountNotExisting": "Account name with this currency is already existing",
         "decimal": "Value must be a decimal",
-        "minValue": "The minimum value allowed is $params.min"
+        "minValue": "The minimum value allowed is $params.min",
+        "tagNotExisting": "Tag with this name is already existing"
     },
     "signIn": "Sign in",
     "email": "Email",
@@ -72,5 +73,6 @@
     "creditTo": "Credit to",
     "amountToDebit": "Amount to debit",
     "amountToCredit": "Amount to credit",
-    "rate": "Rate"
+    "rate": "Rate",
+    "tag": "Tag"
 }
