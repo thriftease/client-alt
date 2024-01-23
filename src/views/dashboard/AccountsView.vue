@@ -120,7 +120,15 @@ async function deleteSelected() {
                         @order="$event(order, true)"
                     ></OrderFieldPart>
                 </th>
-                <th>{{ $t("balance") }}</th>
+                <th>
+                    <OrderFieldPart
+                        :order="order"
+                        :name="$t('balance')"
+                        :asc="AccountOrderQueryInput.BalanceAsc"
+                        :desc="AccountOrderQueryInput.BalanceDesc"
+                        @order="$event(order, true)"
+                    ></OrderFieldPart>
+                </th>
                 <th>{{ $t("actions") }}</th>
             </tr>
         </thead>
