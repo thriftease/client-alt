@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-    <nav>
+    <nav v-bind="$attrs">
         <router-link :to="{ name: 'dashboard-currencies' }">{{
             $t("currencies")
         }}</router-link>
@@ -17,8 +17,12 @@
     </nav>
 </template>
 
-<style scoped>
-nav > a {
-    margin-right: 1em;
+<style scoped lang="postcss">
+nav {
+    @apply flex flex-col flex-wrap;
 }
+
+/* nav > a {
+    margin-right: 1em;
+} */
 </style>

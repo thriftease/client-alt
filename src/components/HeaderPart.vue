@@ -31,26 +31,52 @@ function selectMenu() {
 </script>
 
 <template>
-    <header>
-        <h1>
-            <router-link to="/">{{ defaultTitle }}</router-link>
-        </h1>
-        <select v-model="selectedMenu" @change="selectMenu">
-            <option
-                v-for="(fn, key) in menus"
-                :value="key"
-                :key="key"
-                :hidden="fn === undefined"
+    <header v-bind="$attrs">
+        <div>
+            <router-link to="/"
+                ><h1>{{ defaultTitle }}</h1></router-link
             >
-                {{ fn === undefined ? authStore.signedIn!.fullName : $t(key) }}
-            </option>
-        </select>
+        </div>
+        <div>
+            <select v-model="selectedMenu" @change="selectMenu">
+                <option
+                    v-for="(fn, key) in menus"
+                    :value="key"
+                    :key="key"
+                    :hidden="fn === undefined"
+                >
+                    {{
+                        fn === undefined
+                            ? authStore.signedIn!.fullName
+                            : $t(key)
+                    }}
+                </option>
+            </select>
+        </div>
     </header>
 </template>
 
-<style scoped>
-header > h1 {
-    display: inline-block;
-    margin-right: 1em;
+<style scoped lang="postcss">
+header {
+    @apply flex flex-row flex-wrap;
+    @apply p-4;
+    @apply bg-gray-950;
+}
+
+header > div:first-child {
+    @apply basis-3/4;
+    @apply text-white !important;
+}
+
+header > div:first-child h1 {
+    @apply text-white !important;
+}
+
+header > div:last-child {
+    @apply basis-1/4;
+}
+
+header > div:last-child > select {
+    @apply ml-auto;
 }
 </style>

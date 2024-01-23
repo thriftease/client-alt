@@ -4,8 +4,29 @@ import NavigationPart from "@/components/NavigationPart.vue";
 </script>
 
 <template>
-    <HeaderPart></HeaderPart>
-    <NavigationPart></NavigationPart>
-    <hr />
-    <router-view></router-view>
+    <div id="dashboard" class="prose prose-sm max-w-none">
+        <HeaderPart id="header"></HeaderPart>
+        <NavigationPart id="navigation"></NavigationPart>
+        <div id="content">
+            <router-view></router-view>
+        </div>
+    </div>
 </template>
+
+<style scoped lang="postcss">
+#dashboard {
+    @apply flex flex-row flex-wrap;
+}
+
+#header {
+    @apply basis-full;
+}
+
+#navigation {
+    @apply basis-1/4;
+}
+
+#content {
+    @apply basis-3/4;
+}
+</style>
