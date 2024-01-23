@@ -74,5 +74,7 @@
     "amountToDebit": "Amount to debit",
     "amountToCredit": "Amount to credit",
     "rate": "Rate",
-    "tag": "Tag"
+    "tag": "Tag",
+    "personalDetails": "Personal details",
+    "accountDetails": "Account details"
 }

@@ -106,11 +106,15 @@ async function submit() {
 </script>
 
 <template>
-    <h1>{{ $t(!data.token ? "sendReset" : "applyReset") }}</h1>
+    <h2>
+        {{ $t(!data.token ? "sendReset" : "applyReset") }}
+    </h2>
     <br />
     <form @submit.prevent="submit" novalidate>
-        <div>
-            <label for="email">{{ $t("email") }}</label>
+        <div class="field">
+            <label for="email"
+                >{{ $t("email") }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="email"
@@ -125,8 +129,10 @@ async function submit() {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div v-if="data.token">
-            <label for="password">{{ $t("password") }}</label>
+        <div class="field" v-if="data.token">
+            <label for="password"
+                >{{ $t("password") }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="password"
@@ -141,10 +147,11 @@ async function submit() {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div v-if="data.token">
-            <label for="password-confirmation">{{
-                $t("passwordConfirmation")
-            }}</label>
+        <div class="field" v-if="data.token">
+            <label for="password-confirmation"
+                >{{ $t("passwordConfirmation")
+                }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="password-confirmation"
@@ -158,7 +165,8 @@ async function submit() {
             ></FieldErrorsPart>
         </div>
         <br />
-        <div>
+
+        <div class="links">
             <router-link
                 :to="{
                     name: 'auth-sign-in',
@@ -166,7 +174,10 @@ async function submit() {
                 }"
                 >{{ $t("signIn") }}</router-link
             >
-            <br />
+        </div>
+        <br />
+
+        <div>
             <button
                 type="submit"
                 :disabled="submitting || $v.$invalid || !$v.$anyDirty"
@@ -176,3 +187,17 @@ async function submit() {
         </div>
     </form>
 </template>
+
+<style scoped lang="postcss">
+h2 {
+    @apply text-center;
+}
+
+input {
+    @apply w-full;
+}
+
+button {
+    @apply w-full;
+}
+</style>

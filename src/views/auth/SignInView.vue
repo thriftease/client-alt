@@ -49,11 +49,13 @@ async function submit() {
 </script>
 
 <template>
-    <h1>{{ $t("signIn") }}</h1>
+    <h2>{{ $t("signIn") }}</h2>
     <br />
     <form @submit.prevent="submit" novalidate>
-        <div>
-            <label for="email">{{ $t("email") }}</label>
+        <div class="field">
+            <label for="email"
+                >{{ $t("email") }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="email"
@@ -66,8 +68,10 @@ async function submit() {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
-            <label for="password">{{ $t("password") }}</label>
+        <div class="field">
+            <label for="password"
+                >{{ $t("password") }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="password"
@@ -80,7 +84,7 @@ async function submit() {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
+        <div class="field">
             <label for="remember-me">{{ $t("rememberMe") }}</label>
             <br />
             <input
@@ -91,7 +95,8 @@ async function submit() {
             />
         </div>
         <br />
-        <div>
+
+        <div class="links">
             <router-link
                 :to="{
                     name: 'auth-reset',
@@ -107,7 +112,10 @@ async function submit() {
                 }"
                 >{{ $t("signUp") }}</router-link
             >
-            <br />
+        </div>
+        <br />
+
+        <div>
             <button
                 type="submit"
                 :disabled="submitting || $v.$invalid || !$v.$anyDirty"
@@ -117,3 +125,17 @@ async function submit() {
         </div>
     </form>
 </template>
+
+<style scoped lang="postcss">
+h2 {
+    @apply text-center;
+}
+
+input:not([type="checkbox"]) {
+    @apply w-full;
+}
+
+button {
+    @apply w-full;
+}
+</style>

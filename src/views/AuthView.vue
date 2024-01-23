@@ -1,7 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { defaultTitle } from "@/router/titleGuard";
+</script>
 
 <template>
-    <!-- <div class="container mx-auto mt-60 max-w-md"> -->
-    <router-view></router-view>
-    <!-- </div> -->
+    <div
+        class="container mx-auto my-20 p-8 border-2 rounded-lg prose prose-sm"
+        :class="$route.name !== 'auth-sign-up' ? 'max-w-md' : 'max-w-lg'"
+    >
+        <h1>{{ defaultTitle }}</h1>
+        <router-view></router-view>
+    </div>
 </template>

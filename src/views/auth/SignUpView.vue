@@ -59,118 +59,137 @@ async function submit() {
 </script>
 
 <template>
-    <h1>{{ $t("signUp") }}</h1>
+    <h2>{{ $t("signUp") }}</h2>
     <br />
     <form @submit.prevent="submit" novalidate>
-        <div>
-            <label for="given-name">{{ $t("givenName") }}</label>
-            <br />
-            <input
-                id="given-name"
-                name="givenName"
-                type="text"
-                :maxlength="rules.givenName.maxLength.$params.max"
-                v-model="$v.givenName.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.givenName.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
-        <div>
-            <label for="middle-name">{{ $t("middleName") }}</label>
-            <br />
-            <input
-                id="middle-name"
-                name="middleName"
-                type="text"
-                :maxlength="rules.middleName.maxLength.$params.max"
-                v-model="$v.middleName.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.middleName.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
-        <div>
-            <label for="family-name">{{ $t("familyName") }}</label>
-            <br />
-            <input
-                id="family-name"
-                name="familyName"
-                type="text"
-                :maxlength="rules.familyName.maxLength.$params.max"
-                v-model="$v.familyName.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.familyName.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
-        <div>
-            <label for="suffix">{{ $t("suffix") }}</label>
-            <br />
-            <input
-                id="suffix"
-                name="suffix"
-                type="text"
-                :maxlength="rules.suffix.maxLength.$params.max"
-                v-model="$v.suffix.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.suffix.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
-        <div>
-            <label for="email">{{ $t("email") }}</label>
-            <br />
-            <input
-                id="email"
-                name="email"
-                type="email"
-                :maxlength="rules.email.maxLength.$params.max"
-                v-model="$v.email.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.email.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
-        <div>
-            <label for="password">{{ $t("password") }}</label>
-            <br />
-            <input
-                id="password"
-                name="password"
-                type="password"
-                :minlength="rules.password.minLength.$params.min"
-                :maxlength="rules.password.maxLength.$params.max"
-                v-model="$v.password.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.password.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
-        <div>
-            <label for="password-confirmation">{{
-                $t("passwordConfirmation")
-            }}</label>
-            <br />
-            <input
-                id="password-confirmation"
-                name="passwordConfirmation"
-                type="password"
-                v-model="$v.passwordConfirmation.$model"
-            />
-            <FieldErrorsPart
-                :errors="$v.passwordConfirmation.$errors[0]"
-                :hidden="false"
-            ></FieldErrorsPart>
-        </div>
+        <fieldset>
+            <legend>{{ $t("personalDetails") }}</legend>
+            <div id="field-given-name" class="field">
+                <label for="given-name"
+                    >{{ $t("givenName")
+                    }}<span class="required">*</span></label
+                >
+                <br />
+                <input
+                    id="given-name"
+                    name="givenName"
+                    type="text"
+                    :maxlength="rules.givenName.maxLength.$params.max"
+                    v-model="$v.givenName.$model"
+                />
+                <FieldErrorsPart
+                    :errors="$v.givenName.$errors[0]"
+                    :hidden="false"
+                ></FieldErrorsPart>
+            </div>
+            <div id="field-middle-name" class="field">
+                <label for="middle-name">{{ $t("middleName") }}</label>
+                <br />
+                <input
+                    id="middle-name"
+                    name="middleName"
+                    type="text"
+                    :maxlength="rules.middleName.maxLength.$params.max"
+                    v-model="$v.middleName.$model"
+                />
+                <FieldErrorsPart
+                    :errors="$v.middleName.$errors[0]"
+                    :hidden="false"
+                ></FieldErrorsPart>
+            </div>
+            <div id="field-family-name" class="field">
+                <label for="family-name"
+                    >{{ $t("familyName")
+                    }}<span class="required">*</span></label
+                >
+                <br />
+                <input
+                    id="family-name"
+                    name="familyName"
+                    type="text"
+                    :maxlength="rules.familyName.maxLength.$params.max"
+                    v-model="$v.familyName.$model"
+                />
+                <FieldErrorsPart
+                    :errors="$v.familyName.$errors[0]"
+                    :hidden="false"
+                ></FieldErrorsPart>
+            </div>
+            <div id="field-suffix" class="field">
+                <label for="suffix">{{ $t("suffix") }}</label>
+                <br />
+                <input
+                    id="suffix"
+                    name="suffix"
+                    type="text"
+                    :maxlength="rules.suffix.maxLength.$params.max"
+                    v-model="$v.suffix.$model"
+                />
+                <FieldErrorsPart
+                    :errors="$v.suffix.$errors[0]"
+                    :hidden="false"
+                ></FieldErrorsPart>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{ $t("accountDetails") }}</legend>
+            <div id="field-email" class="field">
+                <label for="email"
+                    >{{ $t("email") }}<span class="required">*</span></label
+                >
+                <br />
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    :maxlength="rules.email.maxLength.$params.max"
+                    v-model="$v.email.$model"
+                />
+                <FieldErrorsPart
+                    :errors="$v.email.$errors[0]"
+                    :hidden="false"
+                ></FieldErrorsPart>
+            </div>
+            <div id="field-password" class="field">
+                <label for="password"
+                    >{{ $t("password") }}<span class="required">*</span></label
+                >
+                <br />
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    :minlength="rules.password.minLength.$params.min"
+                    :maxlength="rules.password.maxLength.$params.max"
+                    v-model="$v.password.$model"
+                />
+                <FieldErrorsPart
+                    :errors="$v.password.$errors[0]"
+                    :hidden="false"
+                ></FieldErrorsPart>
+            </div>
+            <div id="field-password-confirmation" class="field">
+                <label for="password-confirmation"
+                    >{{ $t("passwordConfirmation")
+                    }}<span class="required">*</span></label
+                >
+                <br />
+                <input
+                    id="password-confirmation"
+                    name="passwordConfirmation"
+                    type="password"
+                    v-model="$v.passwordConfirmation.$model"
+                />
+                <FieldErrorsPart
+                    :errors="$v.passwordConfirmation.$errors[0]"
+                    :hidden="false"
+                ></FieldErrorsPart>
+            </div>
+        </fieldset>
         <br />
-        <div>
+
+        <div class="links">
             <router-link
                 :to="{
                     name: 'auth-sign-in',
@@ -178,7 +197,10 @@ async function submit() {
                 }"
                 >{{ $t("signIn") }}</router-link
             >
-            <br />
+        </div>
+        <br />
+
+        <div>
             <button
                 type="submit"
                 :disabled="submitting || $v.$invalid || !$v.$anyDirty"
@@ -188,3 +210,41 @@ async function submit() {
         </div>
     </form>
 </template>
+
+<style scoped lang="postcss">
+h2 {
+    @apply text-center;
+}
+
+input {
+    @apply w-full;
+}
+
+button {
+    @apply w-full;
+}
+
+fieldset {
+    @apply flex flex-row flex-wrap gap-y-2;
+}
+
+fieldset > div {
+    @apply basis-1/2;
+}
+
+#field-email {
+    @apply basis-full;
+}
+
+.field {
+    @apply p-2 mb-0;
+}
+
+#field-family-name {
+    @apply basis-9/12;
+}
+
+#field-suffix {
+    @apply basis-1/4;
+}
+</style>

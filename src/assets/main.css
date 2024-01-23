@@ -2,19 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-/* button {
+button {
+    @apply rounded;
+    @apply text-lg;
     @apply bg-gray-950 text-white px-4 py-2 !important;
 }
 
 button:disabled {
     @apply bg-gray-500 !important;
-} */
+}
 
-table {
+input {
+    @apply rounded !important;
+}
+
+input:disabled {
+    @apply bg-gray-200 text-gray-500;
+}
+
+form .field {
+    @apply mb-3;
+}
+
+form .links {
+    @apply text-right;
+}
+
+form fieldset {
+    @apply rounded border;
+    @apply mb-4;
+}
+
+legend {
+    @apply font-medium text-lg;
+}
+
+label {
+    @apply font-medium;
+}
+
+span.required {
+    @apply text-red-500 pl-1;
+}
+
+/* table {
     border-collapse: collapse;
 }
 
 table > thead > tr > th, table > tbody > tr > td {
     border: 1px solid black;
     padding: 0.1em 0.75em;
-}
+} */

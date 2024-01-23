@@ -19,8 +19,8 @@ defineProps({
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 div {
-    color: red;
+    @apply text-red-500 text-xs;
 }
 </style>
