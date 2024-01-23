@@ -11,6 +11,9 @@
         <router-link :to="{ name: 'dashboard-transactions' }">{{
             $t("transactions")
         }}</router-link>
+        <router-link :to="{ name: 'dashboard-tags' }">{{
+            $t("tags")
+        }}</router-link>
     </nav>
 </template>
 

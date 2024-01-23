@@ -112,6 +112,21 @@ const router = createRouter({
                         import(
                             "@/views/dashboard/transactions/TransactionView.vue"
                         )
+                },
+                {
+                    path: "tags",
+                    name: "dashboard-tags",
+                    meta: { title: getTitle($t("tags")) },
+                    component: () => import("@/views/dashboard/TagsView.vue")
+                },
+                {
+                    path: `tags/:id${idRegex}`,
+                    name: "dashboard-tags-tag",
+                    meta: { title: getTitle() },
+                    component: () =>
+                        import(
+                            "@/views/dashboard/transactions/TransactionView.vue"
+                        )
                 }
             ]
         }
