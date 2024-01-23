@@ -5,7 +5,7 @@ import { defaultTitle } from "@/router/titleGuard";
 <template>
     <div
         class="container mx-auto my-20 p-8 border-2 rounded-lg prose prose-sm"
-        :class="$route.name !== 'auth-sign-up' ? 'max-w-md' : 'max-w-lg'"
+        :class="$route.name !== 'auth-sign-up' ? 'max-w-md' : 'max-w-xl'"
     >
         <h1>{{ defaultTitle }}</h1>
         <router-view></router-view>
