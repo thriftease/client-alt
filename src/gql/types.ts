@@ -42,8 +42,12 @@ export type AccountFilterQueryInput = {
 
 /** An enumeration. */
 export enum AccountOrderQueryInput {
+    BalanceAsc = "BALANCE_ASC",
+    BalanceDesc = "BALANCE_DESC",
     CurrencyAsc = "CURRENCY_ASC",
     CurrencyDesc = "CURRENCY_DESC",
+    FutureBalanceAsc = "FUTURE_BALANCE_ASC",
+    FutureBalanceDesc = "FUTURE_BALANCE_DESC",
     IdAsc = "ID_ASC",
     IdDesc = "ID_DESC",
     NameAsc = "NAME_ASC",
@@ -582,6 +586,8 @@ export type TransactionFilterQueryInput = {
     description_Icontains?: InputMaybe<Scalars["String"]["input"]>;
     id_Icontains?: InputMaybe<Scalars["Decimal"]["input"]>;
     name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
+    operation?: InputMaybe<Scalars["String"]["input"]>;
+    scheduled?: InputMaybe<Scalars["Boolean"]["input"]>;
     tag_Name_Icontains?: InputMaybe<Scalars["String"]["input"]>;
 };
 
