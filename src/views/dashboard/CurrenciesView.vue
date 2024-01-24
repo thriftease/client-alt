@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import FilterPart from "@/components/FilterPart.vue";
-import OrderFieldPart from "@/components/OrderFieldPart.vue";
 import PaginatorPart from "@/components/PaginatorPart.vue";
 import {
     CurrencyOrderQueryInput,
@@ -10,6 +9,7 @@ import {
 import router from "@/router";
 import { useCurrencyStore } from "@/stores";
 import { getQueryOrder, handleError, i18nClient, useSelector } from "@/utils";
+import { PlusCircleIcon } from "@heroicons/vue/24/solid";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -89,9 +89,55 @@ async function deleteSelected() {
 </script>
 
 <template>
-    <h2>{{ $t("currencies") }}</h2>
+    <h2 class="mt-0">{{ $t("currencies") }}</h2>
     <br />
-    <table>
+
+    <PaginatorPart
+        id="paginator"
+        ref="paginator"
+        :value="paginatorValue"
+    ></PaginatorPart>
+    <br />
+
+    <div class="grid grid-cols-4 gap-4">
+        <button
+            :title="$t('add')"
+            @click.prevent="
+                $router.push({
+                    name: 'dashboard-currencies-currency',
+                    params: { id: 0 }
+                })
+            "
+        >
+            <PlusCircleIcon
+                class="inline-block w-full h-full text-stone-500"
+            ></PlusCircleIcon>
+        </button>
+        <button
+            v-for="currency of currencies"
+            :key="currency.id"
+            :title="currency.name"
+            @click.prevent="
+                $router.push({
+                    name: 'dashboard-currencies-currency',
+                    params: { id: currency.id }
+                })
+            "
+        >
+            <div>
+                <small :title="$t('abbreviation')">{{
+                    currency.abbreviation.toUpperCase()
+                }}</small
+                >&nbsp;&centerdot;&nbsp;
+                <small :title="$t('symbol')">{{
+                    currency.symbol.toUpperCase()
+                }}</small>
+            </div>
+            <strong :title="$t('name')">{{ currency.name }}</strong>
+        </button>
+    </div>
+
+    <!-- <table>
         <thead>
             <tr>
                 <td colspan="5">
@@ -158,10 +204,11 @@ async function deleteSelected() {
                             params: { id: currency.id }
                         }"
                     >
-                        <button>{{ $t("view") }}</button>
+                        <button class="button">{{ $t("view") }}</button>
                     </router-link>
                     &nbsp;
                     <button
+                        class="button"
                         @click="del(currency.id)"
                         :disabled="deleting === currency.id"
                     >
@@ -182,6 +229,7 @@ async function deleteSelected() {
             <tr>
                 <td>
                     <button
+                        class="button"
                         @click.prevent="deleteSelected"
                         :disabled="!selectorItems.length || deletingSelected"
                     >
@@ -195,10 +243,34 @@ async function deleteSelected() {
                             params: { id: 0 }
                         }"
                     >
-                        <button style="width: 100%">{{ $t("add") }}</button>
+                        <button class="button" style="width: 100%">
+                            {{ $t("add") }}
+                        </button>
                     </router-link>
                 </td>
             </tr>
         </tfoot>
-    </table>
+    </table> -->
 </template>
+
+<style scoped lang="postcss">
+.grid > div,
+.grid > button {
+    @apply border rounded h-20 p-2 bg-stone-700;
+}
+
+.grid > button:first-child {
+    @apply bg-stone-300;
+}
+
+.grid > button:not(:first-child) > * {
+    @apply text-white;
+}
+.grid > button:not(:first-child) > strong {
+    @apply text-lg;
+}
+
+#paginator {
+    @apply text-center;
+}
+</style>

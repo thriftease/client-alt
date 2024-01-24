@@ -485,10 +485,12 @@ function removeTag(index: number) {
                     v-model="data.tags[idx]"
                     style="width: 5em"
                 />
-                <button @click.prevent="removeTag(idx)">&times;</button>
+                <button class="button" @click.prevent="removeTag(idx)">
+                    &times;
+                </button>
                 &nbsp;
             </span>
-            <button @click.prevent="addTag">&plus;</button>
+            <button class="button" @click.prevent="addTag">&plus;</button>
             <FieldErrorsPart
                 :errors="$v.description.$errors[0]"
                 :hidden="false"
@@ -497,12 +499,17 @@ function removeTag(index: number) {
         <br />
         <div>
             <template v-if="id > 0">
-                <button @click.prevent="del" :disabled="deleting">
+                <button
+                    class="button"
+                    @click.prevent="del"
+                    :disabled="deleting"
+                >
                     {{ $t("delete") }}
                 </button>
                 &nbsp;
             </template>
             <button
+                class="button"
                 type="submit"
                 :disabled="submitting || $v.$invalid || !$v.$anyDirty"
             >

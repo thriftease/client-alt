@@ -2,14 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-button {
+.button {
     @apply rounded;
-    @apply text-lg;
-    @apply bg-gray-950 text-white px-4 py-2 !important;
+    @apply bg-stone-900 text-white px-4 py-2 !important;
 }
 
-button:disabled {
-    @apply bg-gray-500 !important;
+.button[type="submit"] {
+    @apply text-lg;
+}
+
+.button:disabled {
+    @apply contrast-50;
 }
 
 input {
@@ -17,7 +20,7 @@ input {
 }
 
 input:disabled {
-    @apply bg-gray-200 text-gray-500;
+    @apply contrast-75;
 }
 
 form .field {

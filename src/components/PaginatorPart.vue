@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps<{
     value?: PaginatorType;
+    inputPerPage?: boolean;
 }>();
 
 const route = useRoute();
@@ -61,16 +62,18 @@ function setPerPage() {
 </script>
 
 <template>
-    <div v-if="value">
-        <label for="perPage">{{ $t("itemsPerPage") }}</label>
-        <input
-            id="perPage"
-            type="number"
-            min="1"
-            step="1"
-            @keyup.enter="setPerPage"
-            v-model="perPage"
-        />
+    <div v-if="value" v-bind="$attrs">
+        <template v-if="inputPerPage">
+            <label for="perPage">{{ $t("itemsPerPage") }}</label>
+            <input
+                id="perPage"
+                type="number"
+                min="1"
+                step="1"
+                @keyup.enter="setPerPage"
+                v-model="perPage"
+            />
+        </template>
         <router-link
             v-if="value.page.previous"
             :to="getRoute(value.page.previous, value.perPage)"
@@ -78,7 +81,7 @@ function setPerPage() {
         >
         <span v-else>{{ $t("previous") }}</span>
         &nbsp;
-        <span>{{ `${value.page.current} / ${value.pages}` }}</span>
+        <b>{{ `${value.page.current} / ${value.pages}` }}</b>
         &nbsp;
         <router-link
             v-if="value.page.next"

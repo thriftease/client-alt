@@ -179,6 +179,7 @@ async function submit() {
 
         <div>
             <button
+                class="button"
                 type="submit"
                 :disabled="submitting || $v.$invalid || !$v.$anyDirty"
             >

@@ -84,6 +84,8 @@ function getRoute(search: string, filters: string[], props = {}) {
                 {{ val }}
             </option>
         </select>
-        <button @click.prevent="search">{{ $t("search") }}</button>
+        <button class="button" @click.prevent="search">
+            {{ $t("search") }}
+        </button>
     </div>
 </template>

@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import MenuItemPart from "@/components/MenuItemPart.vue";
+import MenuPart from "@/components/MenuPart.vue";
 import { defaultTitle } from "@/router/titleGuard";
 import { useAuthStore } from "@/stores";
 import { i18nClient } from "@/utils";
+import {
+    ArrowLeftEndOnRectangleIcon,
+    BanknotesIcon,
+    UserCircleIcon
+} from "@heroicons/vue/24/solid";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -14,7 +21,7 @@ function signOut() {
         router.go(0);
     } else selectedMenu.value = "menu";
 }
-const menus = {
+const menus: Record<string, undefined | (() => void)> = {
     menu: undefined,
     signOut
 };
@@ -28,17 +35,30 @@ function selectMenu() {
         }
     }
 }
+const customMenus: { title: string; click: () => void }[] = [];
+for (const menu in menus) {
+    const act = menus[menu];
+    if (act !== undefined)
+        customMenus.push({
+            title: i18nClient.global.t(menu),
+            click: act
+        });
+}
 </script>
 
 <template>
     <header v-bind="$attrs">
         <div>
             <router-link to="/"
-                ><h1>{{ defaultTitle }}</h1></router-link
+                ><h1>
+                    <BanknotesIcon class="inline-block h-10 w-10" />&nbsp;{{
+                        defaultTitle
+                    }}
+                </h1></router-link
             >
         </div>
         <div>
-            <select v-model="selectedMenu" @change="selectMenu">
+            <!-- <select v-model="selectedMenu" @change="selectMenu">
                 <option
                     v-for="(fn, key) in menus"
                     :value="key"
@@ -51,20 +71,40 @@ function selectMenu() {
                             : $t(key)
                     }}
                 </option>
-            </select>
+            </select> -->
+            <MenuPart>
+                <template v-slot:title
+                    >{{
+                        authStore.signedIn!.fullName?.toString()
+                    }}&nbsp;<UserCircleIcon class="inline-block h-6 w-6"
+                /></template>
+                <template v-slot:options>
+                    <div class="px-1 py-1">
+                        <MenuItemPart
+                            v-for="(opt, idx) of customMenus"
+                            :key="idx"
+                            @click="opt.click"
+                        >
+                            <ArrowLeftEndOnRectangleIcon
+                                class="inline-block h-6 w-6"
+                            />&nbsp;{{ opt.title }}
+                        </MenuItemPart>
+                    </div>
+                </template>
+            </MenuPart>
         </div>
     </header>
 </template>
 
 <style scoped lang="postcss">
 header {
-    @apply flex flex-row flex-wrap;
+    @apply grid grid-cols-2;
     @apply p-4;
-    @apply bg-gray-950;
+    @apply bg-stone-900;
 }
 
 header > div:first-child {
-    @apply basis-3/4;
+    /* @apply basis-3/4; */
     @apply text-white !important;
 }
 
@@ -73,10 +113,7 @@ header > div:first-child h1 {
 }
 
 header > div:last-child {
-    @apply basis-1/4;
-}
-
-header > div:last-child > select {
-    @apply ml-auto;
+    /* @apply basis-1/4; */
+    @apply justify-self-end;
 }
 </style>

@@ -130,10 +130,11 @@ async function deleteSelected() {
                             params: { id: tag.id }
                         }"
                     >
-                        <button>{{ $t("view") }}</button>
+                        <button class="button">{{ $t("view") }}</button>
                     </router-link>
                     &nbsp;
                     <button
+                        class="button"
                         @click="del(tag.id)"
                         :disabled="deleting === tag.id"
                     >
@@ -154,6 +155,7 @@ async function deleteSelected() {
             <tr>
                 <td>
                     <button
+                        class="button"
                         @click.prevent="deleteSelected"
                         :disabled="!selectorItems.length || deletingSelected"
                     >
@@ -167,7 +169,9 @@ async function deleteSelected() {
                             params: { id: 0 }
                         }"
                     >
-                        <button style="width: 100%">{{ $t("add") }}</button>
+                        <button class="button" style="width: 100%">
+                            {{ $t("add") }}
+                        </button>
                     </router-link>
                 </td>
             </tr>

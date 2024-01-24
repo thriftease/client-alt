@@ -244,12 +244,17 @@ function selectCurrency() {
         <br />
         <div>
             <template v-if="id > 0">
-                <button @click.prevent="del" :disabled="deleting">
+                <button
+                    class="button"
+                    @click.prevent="del"
+                    :disabled="deleting"
+                >
                     {{ $t("delete") }}
                 </button>
                 &nbsp;
             </template>
             <button
+                class="button"
                 type="submit"
                 :disabled="submitting || $v.$invalid || !$v.$anyDirty"
             >

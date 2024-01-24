@@ -27,6 +27,16 @@ import NavigationPart from "@/components/NavigationPart.vue";
 }
 
 #content {
-    @apply basis-3/4;
+    @apply basis-3/4 min-h-screen p-4;
+}
+
+@media screen(lg) {
+    #navigation {
+        @apply basis-1/5;
+    }
+
+    #content {
+        @apply basis-4/5;
+    }
 }
 </style>
