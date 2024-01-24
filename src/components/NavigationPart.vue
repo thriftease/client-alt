@@ -60,7 +60,7 @@ function getActiveClass(name: string) {
     </nav>
 </template>
 
-<style scoped lang="postcss">
+<style scoped lang="pcss">
 nav {
     @apply flex flex-col flex-wrap bg-stone-100;
 }

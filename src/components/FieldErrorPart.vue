@@ -19,7 +19,7 @@ defineProps({
     </div>
 </template>
 
-<style scoped lang="postcss">
+<style scoped lang="pcss">
 div {
     @apply text-red-500 text-xs;
 }

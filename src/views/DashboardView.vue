@@ -13,7 +13,7 @@ import NavigationPart from "@/components/NavigationPart.vue";
     </div>
 </template>
 
-<style scoped lang="postcss">
+<style scoped lang="pcss">
 #dashboard {
     @apply flex flex-row flex-wrap;
 }

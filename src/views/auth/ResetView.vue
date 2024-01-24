@@ -189,7 +189,7 @@ async function submit() {
     </form>
 </template>
 
-<style scoped lang="postcss">
+<style scoped lang="pcss">
 h2 {
     @apply text-center;
 }

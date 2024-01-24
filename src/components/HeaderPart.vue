@@ -96,7 +96,7 @@ for (const menu in menus) {
     </header>
 </template>
 
-<style scoped lang="postcss">
+<style scoped lang="pcss">
 header {
     @apply grid grid-cols-2;
     @apply p-4;

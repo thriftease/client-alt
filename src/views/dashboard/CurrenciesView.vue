@@ -253,7 +253,7 @@ async function deleteSelected() {
     </table> -->
 </template>
 
-<style scoped lang="postcss">
+<style scoped lang="pcss">
 .grid > div,
 .grid > button {
     @apply border rounded h-20 p-2 bg-stone-700;
