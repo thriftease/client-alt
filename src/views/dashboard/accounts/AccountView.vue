@@ -182,11 +182,16 @@ async function del() {
 </script>
 
 <template>
-    <h2>{{ title }}</h2>
+    <h2>
+        <router-link :to="{ name: 'dashboard-accounts' }">{{
+            $t("accounts")
+        }}</router-link
+        >&nbsp;/&nbsp;{{ title }}
+    </h2>
     <br />
 
-    <form @submit.prevent="submit" novalidate>
-        <div>
+    <form class="container max-w-md" @submit.prevent="submit" novalidate>
+        <div class="field">
             <label for="currency">{{ $t("currency") }}</label>
             <br />
             <select
@@ -244,7 +249,7 @@ async function del() {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
+        <div class="field">
             <label for="name">{{ $t("name") }}</label>
             <br />
             <input
@@ -260,7 +265,7 @@ async function del() {
             ></FieldErrorsPart>
         </div>
         <br />
-        <div>
+        <div class="field">
             <template v-if="id > 0">
                 <button
                     class="button"
@@ -286,3 +291,22 @@ async function del() {
         </div>
     </form>
 </template>
+
+<style scoped lang="pcss">
+h2 {
+    @apply mt-0 !important;
+}
+
+input,
+select {
+    @apply w-full;
+}
+
+select {
+    @apply rounded;
+}
+
+form > div:last-child {
+    @apply text-right;
+}
+</style>

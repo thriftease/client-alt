@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import FilterPart from "@/components/FilterPart.vue";
-import OrderFieldPart from "@/components/OrderFieldPart.vue";
 import PaginatorPart from "@/components/PaginatorPart.vue";
 import {
     AccountOrderQueryInput,
@@ -16,6 +15,7 @@ import {
     toPrettyDecimal,
     useSelector
 } from "@/utils";
+import { PlusCircleIcon } from "@heroicons/vue/24/solid";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -39,7 +39,9 @@ async function setup() {
     const res = await accountStore.list({
         paginator: paginator.value?.query,
         filter: filter.value?.record,
-        order: order.value,
+        order: order.value.length
+            ? order.value
+            : [AccountOrderQueryInput.NameAsc],
         options: { fetchPolicy: "network-only" }
     });
     if (res.payload.value) {
@@ -97,7 +99,50 @@ async function deleteSelected() {
 <template>
     <h2>{{ $t("accounts") }}</h2>
     <br />
-    <table>
+
+    <PaginatorPart
+        id="paginator"
+        ref="paginator"
+        :value="paginatorValue"
+    ></PaginatorPart>
+    <br />
+
+    <div class="grid grid-cols-2 gap-4">
+        <button
+            :title="$t('add')"
+            @click.prevent="
+                $router.push({
+                    name: 'dashboard-accounts-account',
+                    params: { id: 0 }
+                })
+            "
+        >
+            <PlusCircleIcon
+                class="inline-block w-16 h-16 text-stone-500"
+            ></PlusCircleIcon>
+        </button>
+        <button
+            v-for="account of accounts"
+            :key="account.id"
+            :title="account.name"
+            @click.prevent="
+                $router.push({
+                    name: 'dashboard-accounts-account',
+                    params: { id: account.id }
+                })
+            "
+        >
+            <div>
+                <strong :title="$t('balance')">
+                    {{ account.currency.symbol
+                    }}{{ toPrettyDecimal(account.balance) }}</strong
+                >
+            </div>
+            <strong :title="$t('name')">{{ account.name }}</strong>
+        </button>
+    </div>
+
+    <!-- <table>
         <thead>
             <tr>
                 <td colspan="4">
@@ -199,5 +244,36 @@ async function deleteSelected() {
                 </td>
             </tr>
         </tfoot>
-    </table>
+    </table> -->
 </template>
+
+<style scoped lang="pcss">
+h2 {
+    @apply mt-0;
+}
+
+.grid > div,
+.grid > button {
+    @apply border rounded min-h-20 p-2 bg-stone-700;
+}
+
+.grid > button:first-child {
+    @apply bg-stone-300;
+}
+
+.grid > button:not(:first-child) > * {
+    @apply text-white;
+}
+
+.grid > button:not(:first-child) > div > strong {
+    @apply text-white;
+}
+
+.grid > button:not(:first-child) > strong {
+    @apply text-lg;
+}
+
+#paginator {
+    @apply text-center;
+}
+</style>
