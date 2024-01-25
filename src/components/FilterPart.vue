@@ -77,7 +77,7 @@ function getRoute(search: string, filters: string[], props = {}) {
 </script>
 
 <template>
-    <div>
+    <div v-bind="$attrs">
         <input type="text" v-model="searchValue" @keyup.enter="search" />
         &nbsp;
         <select

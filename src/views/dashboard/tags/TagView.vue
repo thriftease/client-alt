@@ -158,11 +158,16 @@ async function del() {
 </script>
 
 <template>
-    <h2>{{ title }}</h2>
+    <h2>
+        <router-link :to="{ name: 'dashboard-tags' }">{{
+            $t("tags")
+        }}</router-link
+        >&nbsp;/&nbsp;{{ title }}
+    </h2>
     <br />
 
-    <form @submit.prevent="submit" novalidate>
-        <div>
+    <form class="container max-w-md" @submit.prevent="submit" novalidate>
+        <div class="field">
             <label for="name">{{ $t("name") }}</label>
             <br />
             <input
@@ -204,3 +209,18 @@ async function del() {
         </div>
     </form>
 </template>
+
+<style scoped lang="pcss">
+h2 {
+    @apply mt-0 !important;
+}
+
+input,
+select {
+    @apply w-full;
+}
+
+form > div:last-child {
+    @apply text-right;
+}
+</style>

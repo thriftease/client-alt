@@ -90,18 +90,55 @@ async function deleteSelected() {
     <table>
         <thead>
             <tr>
-                <td colspan="3">
+                <th colspan="3">
                     <FilterPart
                         ref="filter"
-                        :filters="[['name_Icontains', $t('name')]]"
+                        class="inline-block"
+                        :filters="[
+                            ['account_Name_Icontains', $t('account')],
+                            [
+                                'account_Currency_Name_Icontains',
+                                $t('currency')
+                            ],
+                            ['name_Icontains', $t('name')],
+                            ['description_Icontains', $t('description')],
+                            ['tag_Name_Icontains', $t('tags')]
+                        ]"
                     ></FilterPart>
-                </td>
+
+                    &nbsp; &nbsp;
+                    <PaginatorPart
+                        ref="paginator"
+                        class="inline-block"
+                        :value="paginatorValue"
+                    ></PaginatorPart>
+                    &nbsp; &nbsp;
+
+                    <button
+                        class="button"
+                        @click.prevent="deleteSelected"
+                        :disabled="!selectorItems.length || deletingSelected"
+                    >
+                        {{ $t("delete") }}
+                    </button>
+                    &nbsp;
+                    <router-link
+                        :to="{
+                            name: 'dashboard-tags-tag',
+                            params: { id: 0 }
+                        }"
+                    >
+                        <button class="button w-1/5">
+                            {{ $t("add") }}
+                        </button>
+                    </router-link>
+                </th>
             </tr>
             <tr>
-                <th>
+                <th class="w-1">
                     <input type="checkbox" v-model="selectorSelectedAll" />
                 </th>
-                <th>
+                <th class="w-9/12">
                     <OrderFieldPart
                         :order="order"
                         :name="$t('name')"
@@ -143,38 +180,15 @@ async function deleteSelected() {
                 </td>
             </tr>
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3">
-                    <PaginatorPart
-                        ref="paginator"
-                        :value="paginatorValue"
-                    ></PaginatorPart>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button
-                        class="button"
-                        @click.prevent="deleteSelected"
-                        :disabled="!selectorItems.length || deletingSelected"
-                    >
-                        {{ $t("delete") }}
-                    </button>
-                </td>
-                <td colspan="3">
-                    <router-link
-                        :to="{
-                            name: 'dashboard-tags-tag',
-                            params: { id: 0 }
-                        }"
-                    >
-                        <button class="button" style="width: 100%">
-                            {{ $t("add") }}
-                        </button>
-                    </router-link>
-                </td>
-            </tr>
-        </tfoot>
     </table>
 </template>
+
+<style scoped lang="pcss">
+h2 {
+    @apply mt-0;
+}
+
+table > thead > tr:first-child > th {
+    @apply pb-5 text-center;
+}
+</style>

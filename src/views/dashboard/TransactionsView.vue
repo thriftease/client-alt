@@ -104,9 +104,10 @@ async function deleteSelected() {
     <table>
         <thead>
             <tr>
-                <th colspan="3">
+                <th colspan="8">
                     <FilterPart
                         ref="filter"
+                        class="inline-block"
                         :filters="[
                             ['account_Name_Icontains', $t('account')],
                             [
@@ -118,16 +119,15 @@ async function deleteSelected() {
                             ['tag_Name_Icontains', $t('tags')]
                         ]"
                     ></FilterPart>
-                </th>
 
-                <th colspan="2">
+                    &nbsp; &nbsp;
                     <PaginatorPart
                         ref="paginator"
+                        class="inline-block"
                         :value="paginatorValue"
                     ></PaginatorPart>
-                </th>
+                    &nbsp; &nbsp;
 
-                <th colspan="3">
                     <button
                         class="button"
                         @click.prevent="deleteSelected"
@@ -154,7 +154,7 @@ async function deleteSelected() {
                             params: { id: 0 }
                         }"
                     >
-                        <button class="button w-2/5">
+                        <button class="button w-1/5">
                             {{ $t("add") }}
                         </button>
                     </router-link>
@@ -250,10 +250,6 @@ h2 {
 }
 
 table > thead > tr:first-child > th {
-    @apply pb-5;
-}
-
-table > thead > tr:first-child > th:last-child {
-    @apply text-right;
+    @apply pb-5 text-center;
 }
 </style>
