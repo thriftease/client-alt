@@ -89,7 +89,7 @@ async function deleteSelected() {
 </script>
 
 <template>
-    <h2 class="mt-0">{{ $t("currencies") }}</h2>
+    <h2>{{ $t("currencies") }}</h2>
     <br />
 
     <PaginatorPart
@@ -110,7 +110,7 @@ async function deleteSelected() {
             "
         >
             <PlusCircleIcon
-                class="inline-block w-full h-full text-stone-500"
+                class="inline-block w-16 h-16 text-stone-500"
             ></PlusCircleIcon>
         </button>
         <button
@@ -254,9 +254,13 @@ async function deleteSelected() {
 </template>
 
 <style scoped lang="pcss">
+h2 {
+    @apply mt-0;
+}
+
 .grid > div,
 .grid > button {
-    @apply border rounded h-20 p-2 bg-stone-700;
+    @apply border rounded min-h-20 p-2 bg-stone-700;
 }
 
 .grid > button:first-child {

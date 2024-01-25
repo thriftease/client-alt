@@ -76,5 +76,6 @@
     "rate": "Rate",
     "tag": "Tag",
     "personalDetails": "Personal details",
-    "accountDetails": "Account details"
+    "accountDetails": "Account details",
+    "template": "Template"
 }

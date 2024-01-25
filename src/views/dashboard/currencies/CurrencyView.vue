@@ -165,13 +165,24 @@ function selectCurrency() {
 </script>
 
 <template>
-    <h2>{{ title }}</h2>
+    <h2>
+        <router-link :to="{ name: 'dashboard-currencies' }">{{
+            $t("currencies")
+        }}</router-link
+        >&nbsp;/&nbsp;{{ title }}
+    </h2>
     <br />
 
-    <form @submit.prevent="submit" novalidate>
+    <form class="container max-w-md" @submit.prevent="submit" novalidate>
         <template v-if="id === 0">
-            <div>
-                <select v-model="selectedCurrency" @change="selectCurrency">
+            <div class="field">
+                <label for="template">{{ $t("template") }}</label>
+                <br />
+                <select
+                    id="template"
+                    v-model="selectedCurrency"
+                    @change="selectCurrency"
+                >
                     <option value="" hidden>
                         {{ $t("preFillCurrency") }}
                     </option>
@@ -191,11 +202,12 @@ function selectCurrency() {
                     </option>
                 </select>
             </div>
-            <br />
         </template>
 
-        <div>
-            <label for="abbreviation">{{ $t("abbreviation") }}</label>
+        <div class="field">
+            <label for="abbreviation"
+                >{{ $t("abbreviation") }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="abbreviation"
@@ -211,8 +223,10 @@ function selectCurrency() {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
-            <label for="name">{{ $t("name") }}</label>
+        <div class="field">
+            <label for="name"
+                >{{ $t("name") }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="name"
@@ -226,8 +240,10 @@ function selectCurrency() {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
-            <label for="symbol">{{ $t("symbol") }}</label>
+        <div class="field">
+            <label for="symbol"
+                >{{ $t("symbol") }}<span class="required">*</span></label
+            >
             <br />
             <input
                 id="symbol"
@@ -263,3 +279,22 @@ function selectCurrency() {
         </div>
     </form>
 </template>
+
+<style scoped lang="pcss">
+h2 {
+    @apply mt-0 !important;
+}
+
+input,
+select {
+    @apply w-full;
+}
+
+select {
+    @apply rounded;
+}
+
+form > div:last-child {
+    @apply text-right;
+}
+</style>
