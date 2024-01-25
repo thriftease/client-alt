@@ -33,7 +33,9 @@ async function setup() {
     const res = await currencyStore.list({
         paginator: paginator.value?.query,
         filter: filter.value?.record,
-        order: order.value,
+        order: order.value.length
+            ? order.value
+            : [CurrencyOrderQueryInput.NameAsc],
         options: { fetchPolicy: "network-only" }
     });
     if (res.payload.value) {
