@@ -17,6 +17,7 @@ import {
     toPrettyDecimal,
     validators
 } from "@/utils";
+import { PlusIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 import useVuelidate from "@vuelidate/core";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -304,11 +305,16 @@ function removeTag(index: number) {
 </script>
 
 <template>
-    <h2>{{ title }}</h2>
+    <h2>
+        <router-link :to="{ name: 'dashboard-transactions' }">{{
+            $t("transactions")
+        }}</router-link
+        >&nbsp;/&nbsp;{{ title }}
+    </h2>
     <br />
 
-    <form @submit.prevent="submit" novalidate>
-        <div>
+    <form class="container max-w-md" @submit.prevent="submit" novalidate>
+        <div class="field">
             <label for="account">{{
                 $t(id === 0 && type === "transfer" ? "debitFrom" : "account")
             }}</label>
@@ -338,7 +344,7 @@ function removeTag(index: number) {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div v-if="id === 0 && type === 'transfer'">
+        <div class="field" v-if="id === 0 && type === 'transfer'">
             <label for="another-account">{{ $t("creditTo") }}</label>
             <br />
             <select
@@ -366,7 +372,7 @@ function removeTag(index: number) {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
+        <div class="field">
             <label for="datetime">{{ $t("datetime") }}</label>
             <br />
             <input
@@ -380,7 +386,7 @@ function removeTag(index: number) {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
+        <div class="field">
             <label for="amount">{{
                 $t(
                     id === 0 && type === "transfer"
@@ -401,13 +407,14 @@ function removeTag(index: number) {
                 v-model="$v.amount.$model"
                 @input="amountOnInput"
                 @blur="amountOnBlur"
+                style="width: 18em"
             />
             <FieldErrorsPart
                 :errors="$v.amount.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div v-if="id === 0 && type === 'transfer'">
+        <div class="field" v-if="id === 0 && type === 'transfer'">
             <label for="rate">{{ $t("amountToCredit") }}</label>
             <br />
             <span>{{ $t("rate") }}</span
@@ -436,14 +443,14 @@ function removeTag(index: number) {
                 type="text"
                 disabled
                 :value="anotherAmount"
-                style="width: 8em"
+                style="width: 18em"
             />
             <FieldErrorsPart
                 :errors="$v.rate.$errors[0]"
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
+        <div class="field">
             <label for="name">{{ $t("name") }}</label>
             <br />
             <input
@@ -458,13 +465,13 @@ function removeTag(index: number) {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
+        <div class="field">
             <label for="description">{{ $t("description") }}</label>
             <br />
             <textarea
                 id="description"
                 name="description"
-                cols="20"
+                cols="55"
                 rows="5"
                 :maxlength="rules.description.maxLength.$params.max"
                 v-model="$v.description.$model"
@@ -474,23 +481,28 @@ function removeTag(index: number) {
                 :hidden="false"
             ></FieldErrorsPart>
         </div>
-        <div>
+        <div class="field tags">
             <label for="tags">{{ $t("tags") }}</label>
             <br />
-            <span v-for="(tag, idx) of data.tags" :key="idx">
-                <input
-                    :id="`tags[${idx}]`"
-                    :name="`tags[${idx}]`"
-                    type="text"
-                    v-model="data.tags[idx]"
-                    style="width: 5em"
-                />
-                <button class="button" @click.prevent="removeTag(idx)">
-                    &times;
+            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div v-for="(tag, idx) of data.tags" :key="idx">
+                    <input
+                        :id="`tags[${idx}]`"
+                        :name="`tags[${idx}]`"
+                        type="text"
+                        v-model="data.tags[idx]"
+                        style="width: 65%"
+                    />
+                    &nbsp;
+                    <button class="button" @click.prevent="removeTag(idx)">
+                        <XMarkIcon class="inline-block w-3 h-3" />
+                    </button>
+                    &nbsp; &nbsp;
+                </div>
+                <button class="button w-12" @click.prevent="addTag">
+                    <PlusIcon class="inline-block w-3 h-3" />
                 </button>
-                &nbsp;
-            </span>
-            <button class="button" @click.prevent="addTag">&plus;</button>
+            </div>
             <FieldErrorsPart
                 :errors="$v.description.$errors[0]"
                 :hidden="false"
@@ -518,3 +530,31 @@ function removeTag(index: number) {
         </div>
     </form>
 </template>
+
+<style scoped lang="pcss">
+h2 {
+    @apply mt-0 !important;
+}
+
+input,
+select {
+    @apply w-full;
+}
+
+select,
+textarea {
+    @apply rounded;
+}
+
+textarea {
+    resize: none;
+}
+
+form > div:last-child {
+    @apply text-right;
+}
+
+.field.tags .button {
+    /* @apply w-6; */
+}
+</style>

@@ -10,6 +10,11 @@ const props = defineProps({
         type: Array<[string, string]>,
         default: [],
         required: false
+    },
+    selector: {
+        type: Boolean,
+        default: false,
+        required: false
     }
 });
 
@@ -74,8 +79,9 @@ function getRoute(search: string, filters: string[], props = {}) {
 <template>
     <div>
         <input type="text" v-model="searchValue" @keyup.enter="search" />
+        &nbsp;
         <select
-            v-if="filters.length"
+            v-if="selector && filters.length"
             v-model="selectedFilters"
             :size="filters.length > 1 ? 3 : 1"
             multiple

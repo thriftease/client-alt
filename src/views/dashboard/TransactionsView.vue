@@ -104,7 +104,7 @@ async function deleteSelected() {
     <table>
         <thead>
             <tr>
-                <td colspan="7">
+                <th colspan="3">
                     <FilterPart
                         ref="filter"
                         :filters="[
@@ -118,10 +118,50 @@ async function deleteSelected() {
                             ['tag_Name_Icontains', $t('tags')]
                         ]"
                     ></FilterPart>
-                </td>
+                </th>
+
+                <th colspan="2">
+                    <PaginatorPart
+                        ref="paginator"
+                        :value="paginatorValue"
+                    ></PaginatorPart>
+                </th>
+
+                <th colspan="3">
+                    <button
+                        class="button"
+                        @click.prevent="deleteSelected"
+                        :disabled="!selectorItems.length || deletingSelected"
+                    >
+                        {{ $t("delete") }}
+                    </button>
+                    &nbsp;
+                    <router-link
+                        :to="{
+                            name: 'dashboard-transactions-transaction',
+                            params: { id: 0 },
+                            query: { type: 'transfer' }
+                        }"
+                    >
+                        <button class="button">
+                            {{ $t("transfer") }}
+                        </button>
+                    </router-link>
+                    &nbsp;
+                    <router-link
+                        :to="{
+                            name: 'dashboard-transactions-transaction',
+                            params: { id: 0 }
+                        }"
+                    >
+                        <button class="button w-2/5">
+                            {{ $t("add") }}
+                        </button>
+                    </router-link>
+                </th>
             </tr>
             <tr>
-                <th>
+                <th class="w-1">
                     <input type="checkbox" v-model="selectorSelectedAll" />
                 </th>
                 <th>{{ $t("account") }}</th>
@@ -201,49 +241,19 @@ async function deleteSelected() {
                 </td>
             </tr>
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="7">
-                    <PaginatorPart
-                        ref="paginator"
-                        :value="paginatorValue"
-                    ></PaginatorPart>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button
-                        class="button"
-                        @click.prevent="deleteSelected"
-                        :disabled="!selectorItems.length || deletingSelected"
-                    >
-                        {{ $t("delete") }}
-                    </button>
-                </td>
-                <td colspan="7">
-                    <router-link
-                        :to="{
-                            name: 'dashboard-transactions-transaction',
-                            params: { id: 0 },
-                            query: { type: 'transfer' }
-                        }"
-                    >
-                        <button class="button" style="width: 25%">
-                            {{ $t("transfer") }}
-                        </button>
-                    </router-link>
-                    <router-link
-                        :to="{
-                            name: 'dashboard-transactions-transaction',
-                            params: { id: 0 }
-                        }"
-                    >
-                        <button class="button" style="width: 75%">
-                            {{ $t("add") }}
-                        </button>
-                    </router-link>
-                </td>
-            </tr>
-        </tfoot>
     </table>
 </template>
+
+<style scoped lang="pcss">
+h2 {
+    @apply mt-0;
+}
+
+table > thead > tr:first-child > th {
+    @apply pb-5;
+}
+
+table > thead > tr:first-child > th:last-child {
+    @apply text-right;
+}
+</style>
