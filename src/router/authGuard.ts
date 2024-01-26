@@ -12,7 +12,8 @@ async function authGuard(
     const authStore = useAuthStore();
     if (!authedRedirection && !notAuthedRedirection) return next();
 
-    await authStore.verify();
+    const re = await authStore.verify();
+    if (re?.error.value) authStore.signOut();
 
     // skipAuthCheck if matches and just proceed with the route
     // since we don't want to re-run this route guard again
