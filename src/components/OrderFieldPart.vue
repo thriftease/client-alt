@@ -92,10 +92,16 @@ function toggleOrder() {
 </script>
 
 <template>
-    <button class="button" @click.prevent="toggleOrder">
+    <button @click.prevent="toggleOrder">
         {{ name }}
         <template v-if="selectedOrder !== null">
             &nbsp;{{ selectedOrder === asc ? "&uarr;" : "&darr;" }}
         </template>
     </button>
 </template>
+
+<style scoped lang="pcss">
+button {
+    @apply border px-4 rounded bg-stone-200 py-0;
+}
+</style>
